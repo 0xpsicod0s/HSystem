@@ -18,7 +18,7 @@ export const login = async (req, res) => {
     try {
         const { nickname, password } = login.body;
         const dataToSend = { nickname, password };
-        const response = await axios.post('https://dophb.netlify.app/api/authenticate', dataToSend);
+        const response = await axios.post('https://dopsystem-production.up.railway.app/api/authenticate', dataToSend);
         const token = response.data.token;
         
         res.cookie('token', token, { httpOnly: true, path: '/' });
