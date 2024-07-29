@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departamentos | DOP</title>
+    <link rel="shortcut icon" href="../../img/icons-100.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="/css/pages.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../js/checkDepartment.js" defer></script>
+    <script src="../js/departments.js" defer></script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url=/index.html">
+    </noscript>
+</head>
+
+<body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#" style="background-color: #1e272e;">
+                <img src="../../img/icons-100.png" alt="Logo" style="max-width: 100%; height: auto;">
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="/pages/index.html">
+                    Home
+                </a>
+                <a class="navbar-item" href="/pages/departments.html">
+                    Departamentos
+                </a>
+                <a class="navbar-item" href="/pages/requirements.html">
+                    Requerimentos
+                </a>
+                <a class="navbar-item" href="/pages/members.html">
+                    Membros
+                </a>
+                <a class="navbar-item" href="/pages/profile.html">
+                    Perfil
+                </a>
+            </div>
+        </div>
+    </nav>
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-two-thirds">
+                    <div class="box">
+                        <h1 class="title has-text-centered has-text-white">Departamentos</h1>
+                        <div class="field">
+                            <label class="label has-text-white">Selecione uma opção</label>
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select id="departmentOptions">
+                                        <option value="" disabled selected>Selecione uma opção</option>
+                                        <option value="documentos">Documentos</option>
+                                        <option value="postagem_de_aula">Postagem de Aulas</option>
+                                        <option value="aulas">Aulas</option>
+                                        <option value="membros">Listagem de Membros</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                <input class="input" type="hidden" value="Marketing">
+                            </div>
+                        </div>   
+                        <div id="departmentContent">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

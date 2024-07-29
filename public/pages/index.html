@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Principal | DOP</title>
+    <link rel="shortcut icon" href="../img/icons-100.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="../css/pages.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url=/index.html">
+    </noscript>
+</head>
+
+<body>
+
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#" style="background-color: #1e272e;">
+                <img src="../img/icons-100.png" alt="Logo" style="max-width: 100%; height: auto;">
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="./index.html">
+                    Home
+                </a>
+                <a class="navbar-item" href="./departments.html">
+                    Departamentos
+                </a>
+                <a class="navbar-item" href="./requirements.html">
+                    Requerimentos
+                </a>
+                <a class="navbar-item" href="./members.html">
+                    Membros
+                </a>
+                <a class="navbar-item" href="./profile.html">
+                    Perfil
+                </a>
+            </div>
+        </div>
+    </nav>
+    <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-three-quarters">
+                    <div class="logo-container has-text-centered">
+                        <img src="../img/icons-100.png" alt="Logo" style="width: 100px; height: auto;">
+                    </div>
+                    <div class="main-box">
+                        <h1 class="title has-text-centered has-text-white">Página Principal</h1>
+                        <div class="field">
+                            <label class="label has-text-white">Pesquisar Usuários</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="Digite o nome de usuário">
+                                <button class="button search is-primary box">Pesquisar</button>
+                            </div>
+                        </div>
+                        <div class="columns">
+                            <div class="column">
+                                <div class="box">
+                                    <h2 class="subtitle has-text-white">Publicações</h2>
+                                    <div class="content">
+                                        <p class="has-text-white">Aqui serão exibidas as publicações dos
+                                            administradores.</p>
+                                        <!-- Exemplo de publicação -->
+                                        <div class="publication">
+                                            <p class="has-text-white">
+                                                <strong style="color: #222426;">Admin</strong> <small>@admin</small>
+                                                <small>31m</small>
+                                                <br>
+                                                Esta é uma publicação de exemplo.
+                                            </p>
+                                        </div>
+                                        <!-- Fim do exemplo de publicação -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="box">
+                                    <h2 class="subtitle has-text-white">Documentos</h2>
+                                    <div class="content">
+                                        <p class="has-text-white">Aqui serão exibidos os documentos disponíveis.</p>
+                                        <!-- Exemplo de documento -->
+                                        <div class="document has-text-white">
+                                            <p>Documento 1</p>
+                                            <a href="#">Ler</a>
+                                        </div>
+                                        <div class="document has-text-white">
+                                            <p>Documento 2</p>
+                                            <a href="#">Ler</a>
+                                        </div>
+                                        <!-- Fim do exemplo de documento -->
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="control">
+                            <a id="logout" href="../index.html" class="button is-primary box">Sair</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="js/mainPage.js"></script>
+</body>
+
+</html>

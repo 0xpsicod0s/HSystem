@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil | DOP</title>
+    <link rel="shortcut icon" href="../img/icons-100.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="../css/pages.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url=/index.html">
+    </noscript>
+</head>
+
+<body>
+
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#" style="background-color: #1e272e;">
+                <img src="../img/icons-100.png" alt="Logo" style="max-width: 100%; height: auto;">
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="./index.html">
+                    Home
+                </a>
+                <a class="navbar-item" href="./departments.html">
+                    Departamentos
+                </a>
+                <a class="navbar-item" href="./requirements.html">
+                    Requerimentos
+                </a>
+                <a class="navbar-item" href="./members.html">
+                    Membros
+                </a>
+                <a class="navbar-item" href="./profile.html">
+                    Perfil
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-three-quarters">
+                    <div class="logo-container has-text-centered">
+                        <img src="../img/icons-100.png" alt="Logo" style="width: 100px; height: auto;">
+                    </div>
+                    <div class="main-box">
+                        <h1 class="title has-text-centered has-text-white">Perfil do Usuário</h1>
+                        <div class="box has-background-dark">
+                            <article class="media">
+                                <figure class="media-left">
+                                    <p class="image is-64x64">
+                                        <img src="https://www.habbo.com.br/habbo-imaging/avatarimage?&user=0xpsico&action=std&direction=2&head_direction=2&img_format=png&gesture=sml&frame=1&headonly=0&size=m" alt="Avatar">
+                                    </p>
+                                </figure>
+                                <div class="media-content">
+                                    <div class="content">
+                                        <p>
+                                            <strong id="user-nickname" class="has-text-white">0xpsico</strong><br>
+                                            <small id="user-role" class="has-text-white">Patente: </small><br>
+                                            <small id="user-status" class="has-text-white">Status: </small><br>
+                                            <small  id="user-createdAt" class="has-text-white">Data de Criação: </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        
+                        <div class="box has-background-dark">
+                            <h2 class="subtitle has-text-white">Cursos Aprovados</h2>
+                            <div class="content" id="approvedCourses">
+                            </div>
+                        </div>
+
+                        <div class="box has-background-dark">
+                            <h2 class="subtitle has-text-white">Departamentos Participantes</h2>
+                            <div class="content" id="departments-participants">
+                            </div>
+                        </div>
+
+                        <div class="box has-background-dark">
+                            <h2 class="subtitle has-text-white">Redefinir Dados</h2>
+                            <form id="resetForm">
+                                <div class="field">
+                                    <label class="label has-text-white">Nova Senha</label>
+                                    <div class="control">
+                                        <input class="input" type="password" placeholder="Digite a nova senha">
+                                    </div>
+                                </div>
+                                <div class="control">
+                                    <button class="button is-primary box" type="submit">Redefinir</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/profile.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | DOP</title>
+    <link rel="shortcut icon" href="./img/icons-100.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="./css/authenticationStyle.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-half">
+                    <div class="logo-container has-text-centered">
+                        <img src="./img/icons-100.png" alt="Logo" style="width: 100px; height: auto;">
+                    </div>
+                    <div class="login-box">
+                        <h1 class="title has-text-centered has-text-white">Login</h1>
+                        <form>
+                            <div class="field">
+                                <label class="label has-text-white">Nome de Usuário</label>
+                                <div class="control">
+                                    <input class="input" name="nickname" type="text" placeholder="Seu nome de usuário">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label has-text-white">Senha</label>
+                                <div class="control">
+                                    <input class="input" name="password" type="password" placeholder="Sua senha">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control">
+                                    <button class="button is-primary is-fullwidth" id="enterBtn"
+                                        style="background-color: #34495e;">Entrar</button>
+                                </div>
+                            </div>
+                            <div class="field is-grouped is-grouped-right">
+                                <div class="control">
+                                    <a href="./register.html" class="has-text-white">Registre-se</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="./js/login.js"></script>
+</body>
+
+</html>

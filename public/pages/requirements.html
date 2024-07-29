@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Requerimentos | DOP</title>
+    <link rel="shortcut icon" href="../img/icons-100.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="/css/pages.css">
+    <link rel="stylesheet" href="./css/calendar.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url=/index.html">
+    </noscript>
+</head>
+
+<body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#" style="background-color: #1e272e;">
+                <img src="../img/icons-100.png" alt="Logo" style="max-width: 100%; height: auto;">
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="./index.html">
+                    Home
+                </a>
+                <a class="navbar-item" href="./departments.html">
+                    Departamentos
+                </a>
+                <a class="navbar-item" href="./requeriments.html">
+                    Requerimentos
+                </a>
+                <a class="navbar-item" href="./members.html">
+                    Membros
+                </a>
+                <a class="navbar-item" href="./profile.html">
+                    Perfil
+                </a>
+            </div>
+        </div>
+    </nav>
+    <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-half">
+                    <div class="logo-container has-text-centered">
+                        <img src="../img/icons-100.png" alt="Logo" style="width: 100px; height: auto;">
+                    </div>
+                    <div class="box">
+                        <h1 class="title has-text-centered has-text-white">Requerimentos</h1>
+                        <div class="field">
+                            <label class="label has-text-white">Tipo de Requerimento</label>
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select id="requirementType">
+                                        <option value="" disabled selected>Selecione uma opção</option>
+                                        <option value="promocao">Promoção</option>
+                                        <option value="rebaixamento">Rebaixamento</option>
+                                        <option value="advertencia">Advertência</option>
+                                        <option value="contrato">Contrato</option>
+                                        <option value="demissao">Demissão</option>
+                                        <option value="vendaDeCargo">Venda de Cargo</option>
+                                        <option value="avaliacao">Avaliação</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="requirementForm">
+                            <!-- Os inputs dinâmicos aparecerão aqui -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="./js/requirements.js"></script>
+</body>

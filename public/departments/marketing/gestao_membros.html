@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Membros | DOP</title>
+    <link rel="shortcut icon" href="../../img/icons-100.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="/css/pages.css">
+    <link rel="stylesheet" href="../css/memberControl.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../js/checkDepartment.js" defer></script>
+    <script src="../js/memberControl.js" defer></script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url=/index.html">
+    </noscript>
+    <style>
+        .member-box {
+            background-color: #1e272e;
+        }
+
+        .main-box {
+            background-color: #2f3640;
+            padding: 20px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#" style="background-color: #1e272e;">
+                <img src="../../img/icons-100.png" alt="Logo" style="max-width: 100%; height: auto;">
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="/pages/index.html">
+                    Home
+                </a>
+                <a class="navbar-item" href="/pages/departments.html">
+                    Departamentos
+                </a>
+                <a class="navbar-item" href="/pages/requeriments.html">
+                    Requerimentos
+                </a>
+                <a class="navbar-item" href="/pages/members.html">
+                    Membros
+                </a>
+                <a class="navbar-item" href="/pages/profile.html">
+                    Perfil
+                </a>
+            </div>
+        </div>
+    </nav>
+    <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-three-quarters">
+                    <div class="logo-container has-text-centered">
+                        <img src="../../img/icons-100.png" alt="Logo" style="width: 100px; height: auto;">
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input type="hidden" value="Marketing">
+                        </div>
+                    </div>
+                    <div class="main-box">
+                        <h1 class="title has-text-centered has-text-white">Controle de Membros</h1>
+                        <div class="columns is-multiline"></div>
+                    </div>
+                    <button class="button is-primary box is-pulled-right" id="addMemberBtn">Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

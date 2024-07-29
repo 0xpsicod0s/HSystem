@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adicionar Documentos | DOP</title>
+    <link rel="shortcut icon" href="../../img/icons-100.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="/css/pages.css">
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.0.0/classic/ckeditor.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="../js/checkDepartment.js" defer></script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url=/index.html">
+    </noscript>
+    <style>
+        .ck-editor__editable_inline {
+            min-height: 400px;
+            width: 100%;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#" style="background-color: #1e272e;">
+                <img src="../../img/icons-100.png" alt="Logo" style="max-width: 100%; height: auto;">
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="/pages/index.html">
+                    Home
+                </a>
+                <a class="navbar-item" href="/pages/departments.html">
+                    Departamentos
+                </a>
+                <a class="navbar-item" href="/pages/requirements.html">
+                    Requerimentos
+                </a>
+                <a class="navbar-item" href="/pages/members.html">
+                    Membros
+                </a>
+                <a class="navbar-item" href="/pages/profile.html">
+                    Perfil
+                </a>
+            </div>
+        </div>
+    </nav>
+    <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-two-thirds">
+                    <div class="box">
+                        <h1 class="title has-text-centered has-text-white">Adicionar Documento</h1>
+                        <div class="field">
+                            <div class="control">
+                                <input class="input" type="hidden" value="Ensino"  id="departmentName">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label has-text-white">Título do Documento</label>
+                            <div class="control">
+                                <input class="input" type="text" id="documentTitle" placeholder="Título do Documento">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label has-text-white">Conteúdo do Documento</label>
+                            <div class="control">
+                                <div id="editor" class="ck-editor__editable_inline"></div> <!-- Editor CKEditor substitui o textarea -->
+                            </div>
+                        </div>
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button class="button is-link" id="saveDocument">Salvar Documento</button>
+                            </div>
+                            <div class="control">
+                                <button class="button is-link is-light" id="cancelDocument">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <script>
+        $(document).ready(function () {
+            const editor = ClassicEditor
+            .create(document.querySelector('#editor'), {
+                    toolbar: {
+                        items: [
+                            'undo', 'redo',
+                            '|',
+                            'heading',
+                            '|',
+                            'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor',
+                            '|',
+                            'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'code',
+                            '|',
+                            'link', 'uploadImage', 'blockQuote', 'codeBlock',
+                            '|',
+                            'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent'
+                        ],
+                        shouldNotGroupWhenFull: false
+                    },
+                    heading: {
+                        options: [
+                            { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                            { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                            { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' }
+                        ]
+                    },
+                    fontFamily: {
+                        options: [
+                            'default',
+                            'Ubuntu, Arial, sans-serif',
+                            'Ubuntu Mono, Courier New, Courier, monospace'
+                        ]
+                    },
+                    fontColor: {
+                        colorPicker: {
+                            format: 'hex'
+                        }
+                    },
+                    language: 'pt-br',
+                    initialData: 'Adicione o conteúdo de seu documento aqui...',
+                    fontSize: {
+                        options: [
+                            'tiny',
+                            'small',
+                            'default',
+                            'big',
+                            'huge'
+                        ]
+                    },
+                })
+                .then(editor => {
+                    $('#saveDocument').on('click', function () {
+                        const dataToSend = ['salva_documento'];
+                        const departmentName = $('#departmentName').val();
+                        const documentTitle = $('#documentTitle').val();
+                        const documentContent = editor.getData();
+                        dataToSend.push({ departmentName, documentTitle, documentContent });
+                        console.log(dataToSend);
+                        $.ajax({
+                            method: 'POST',
+                            url: '/api/departments/requirements',
+                            xhrFields: {
+                                withCredentials: true
+                            },
+                            contentType: 'application/json; charset=utf-8',
+                            data: JSON.stringify(dataToSend),
+                            success: function (data) {
+                                successfulOperation('Documento salvo com sucesso!');
+                                setTimeout(() => window.location.reload(), 2000);
+                            },
+                            error: function (data) {
+                                showError(data.responseJSON.error);
+                            }
+                        });
+                    });
+                })
+                .catch(error => {
+                    showError('Erro ao carregar o editor de texto');
+                });
+            
+            $('#cancelDocument').on('click', () => window.history.back());
+        });
+
+        function successfulOperation(message) {
+            if ($('.box .is-danger')) $('.box .is-danger').remove();
+            const successMessage = $(`<p>${message}</p>`);
+            $('.box').after($('<div>').addClass('notification is-success').css('margin-top', '20px').append(successMessage));
+        }
+
+        function showError(message) {
+            if ($('.box .is-danger')) $('.box .is-danger').remove();
+            const errorMessage = $(`<p>${message}</p>`);
+            $('.box').after($('<div>').addClass('notification is-danger').css('margin-top', '20px').append(errorMessage));            
+        }
+    </script>
+</body>
+</html>
