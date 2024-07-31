@@ -9,7 +9,7 @@ export const frontAuthentication = (req, res, next) => {
     const cookies = cookieHeader.split(';');
     const tokenHeader = cookies.find(cookie => /^token/.test(cookie));
     if (!tokenHeader) return next();
-    
+
     const authHeader = `Bearer ${tokenHeader.split('=')[1]}`;
     if (!authHeader) return next();
 
@@ -38,6 +38,7 @@ export const frontAuthentication = (req, res, next) => {
 
 export const accessNotGranted = (req, res, next) => {
     if (!req.accessGranted) {
+        console.log('caiu aq');
         return res.redirect('/');
     }
     next();
