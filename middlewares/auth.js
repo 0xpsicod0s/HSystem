@@ -7,7 +7,7 @@ export const isAuthenticated = (req, res, next) => {
     if (!cookieHeader) return res.status(401).json({ error: 'Cabeçalho de token nao informado' });
 
     const cookies = cookieHeader.split(';');
-    const tokenHeader = cookies.find(cookie => /^ token/.test(cookie));
+    const tokenHeader = cookies.find(cookie => /^(token=| token=)/.test(cookie));
     if (!tokenHeader) return res.status(401).json({ error: 'Token não informado' });
     
     const authHeader = `Bearer ${tokenHeader.split('=')[1]}`;
