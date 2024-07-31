@@ -9,7 +9,7 @@ export const frontAuthentication = (req, res, next) => {
 
     const cookies = cookieHeader.split(';');
     console.log('cookies: ', cookies);
-    const tokenHeader = cookies.find(cookie => /^token/.test(cookie));
+    const tokenHeader = cookies.find(cookie => cookie.startsWith('token='));
     console.log('token: ', tokenHeader);
     if (!tokenHeader) return next();
 
