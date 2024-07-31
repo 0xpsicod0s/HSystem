@@ -3,10 +3,16 @@ import { RegisterModel } from '../models/Register.js';
 import { restrictedTokens } from '../controllers/authController.js';
 
 export const isAuthenticated = (req, res, next) => {
-    const tokenHeader = req.headers.cookie;
-    if (!tokenHeader) return res.status(401).json({ error: 'Cabeçalho de token nao informado' });
-    const authHeader = `Bearer ${tokenHeader.split(';')[0].split('=')[1]}`;
-    if (!authHeader) return res.status(401).json({ error: 'Token nao informado' });
+    const cookieHeader = req.headers.cookie;
+    if (!cookieHeader) return res.status(401).json({ error: 'Cabeçalho de token nao informado' });
+
+    const cookies = cookieHeader.split(';');
+    const tokenHeader = cookies.find(cookie => /^token/.test(cookie));
+    if (!tokenHeader) return res.status(401).json({ error: 'Token não informado' });
+    
+    const authHeader = `Bearer ${tokenHeader.split('=')[1]}`;
+    if (!authHeader) return res.status(400).json({ error: 'Formato de token invalido' });
+
 
     const findToken = restrictedTokens.find(token => token === authHeader);
     if (findToken) {
