@@ -19,6 +19,7 @@ function showUserProfile(data) {
 }
 
 function showError(message) {
+    if ($('.is-danger')) $('.is-danger').remove();
     const errorMessage = $(`<p>${message}</p>`);
     $('.field').after($('<div>').addClass('notification is-danger').append(errorMessage));
 }
