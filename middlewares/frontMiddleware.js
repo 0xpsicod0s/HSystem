@@ -4,10 +4,13 @@ import { restrictedTokens } from '../controllers/authController.js';
 export const frontAuthentication = (req, res, next) => {
     req.accessGranted = false;
     const cookieHeader = req.headers.cookie;
+    console.log('cookie header: ', cookieHeader);
     if (!cookieHeader) return next();
 
     const cookies = cookieHeader.split(';');
+    console.log('cookies: ', cookies);
     const tokenHeader = cookies.find(cookie => /^token/.test(cookie));
+    console.log('token: ', tokenHeader);
     if (!tokenHeader) return next();
 
     const authHeader = `Bearer ${tokenHeader.split('=')[1]}`;
