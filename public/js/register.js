@@ -35,7 +35,7 @@ async function registerUser(data) {
             $('.login-box').append(message);
             setTimeout(() => {
                 window.location = '/index.html';
-            }, 3000);
+            }, 2000);
         } else {
             throw new Error(responseData.error);
         }

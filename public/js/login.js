@@ -37,7 +37,7 @@ async function loginUser(data) {
 
             setTimeout(() => {
                 window.location = '/pages/index.html';
-            }, 3000);
+            }, 2000);
         } else {
             throw new Error(responseData.error);
         }
