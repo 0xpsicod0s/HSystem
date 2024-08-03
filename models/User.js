@@ -42,4 +42,16 @@ export class User {
             return this.res.status(500).json({ error: 'Erro interno. Não foi possível redefinir seus dados' });
         }
     }
+
+    async isAdmin() {
+        try {
+            const user = await RegisterModel.findOne({ _id: this.req.userId }).select('isAdmin');
+            if (!user) return this.res.status(400).json({ error: 'Oops! Algo deu errado.' });
+
+            if (user.isAdmin) return this.res.status(200).json({ accessGranted: true });
+            return this.res.status(200).json({ accessGranted: false });
+        } catch(err) {
+            return this.res.status(500).json({ error: 'Houve um erro interno. Contate um responsavel' });
+        }
+    }
 }

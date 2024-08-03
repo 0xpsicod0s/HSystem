@@ -3,7 +3,10 @@ import { register, login, logout, authenticate } from '../controllers/authContro
 import { isAuthenticated, roleMiddleware, departmentMiddleware } from '../middlewares/auth.js';
 import { departmentParticipant, departmentsRequirements, getDocuments, getMembers, getClasses, editMember, removeMember, getClassPosting, getDepartment, isLeader } from '../controllers/departmentsController.js';
 import { searchUser, validateSearchUser, getMilitaries, requirements } from '../controllers/pagesControllers.js';
-import { profile, reset } from '../controllers/userController.js';
+import { usersActive } from '../controllers/panelController.js';
+import { middlewareIsAdmin } from '../middlewares/panelMiddleware.js';
+import { getLogs } from '../controllers/logController.js';
+import { profile, reset, isAdmin } from '../controllers/userController.js';
 import { militaryHierarchy, departments } from '../models/Register.js';
 
 const router = express.Router();
@@ -16,6 +19,7 @@ router.post('/authenticate', authenticate);
 
 // Rotas do perfil
 router.get('/user/profile', isAuthenticated, profile);
+router.get('/isAdmin', isAuthenticated, isAdmin);
 router.post('/user/reset', isAuthenticated, reset);
 
 // Rotas internas do system
@@ -37,5 +41,11 @@ router.get('/departments/isLeader', isAuthenticated, departmentMiddleware(depart
 // Alterações de membros
 router.post('/departments/editMember', isAuthenticated, editMember);
 router.post('/departments/removeMember', isAuthenticated, removeMember);
+
+// Rotas do painel administrativo
+router.get('/panel/usersActive', isAuthenticated, middlewareIsAdmin, usersActive);
+
+// Rota de logs
+router.get('/logs', isAuthenticated, middlewareIsAdmin, getLogs);
 
 export default router;

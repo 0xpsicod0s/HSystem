@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo | DOP</title>
+    <link rel="shortcut icon" href="../../img/icons-100.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="../../css/pages.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url=/index.html">
+    </noscript>
+</head>
+
+<body>
+
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#" style="background-color: #1e272e;">
+                <img src="../../img/icons-100.png" alt="Logo" style="max-width: 100%; height: auto;">
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="control-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="control-menu" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="./dashboard.html">
+                    Documentos
+                </a>
+                <a class="navbar-item" href="./backup.html">
+                    Publicações
+                </a>
+                <a class="navbar-item" href="./user-management.html">
+                    Usuários
+                </a>
+                <a class="navbar-item" href="./logs.html">
+                    Logs
+                </a>
+                <a class="navbar-item" href="../index.html">
+                    Voltar ao System
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <h1 class="title has-text-centered has-text-white">Painel Administrativo</h1>
+
+            <div class="columns is-multiline">
+                <div class="column is-one-third">
+                    <div class="box">
+                        <h2 class="subtitle has-text-white">Estatísticas</h2>
+                        <div class="content">
+                            <p id="users-active" class="has-text-white"></p>
+                            <!-- <p class="has-text-white">Publicações: 45</p>
+                            <p class="has-text-white">Documentos: 30</p> -->
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="column is-one-third">
+                    <div class="box">
+                        <h2 class="subtitle has-text-white">Configurações</h2>
+                        <div class="content">
+                            <h3 class="has-text-white">Backup</h3>
+                            <p class="has-text-white">Configurações de backup automáticas.</p>
+                            <button class="button is-primary">Fazer Backup</button>
+
+                            <h3 class="has-text-white">Segurança</h3>
+                            <p class="has-text-white">Gerenciar configurações de segurança.</p>
+                            <button class="button is-primary">Configurar Segurança</button>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="column is-one-third">
+                    <div class="box">
+                        <h2 class="subtitle has-text-white">Logs</h2>
+                        <div class="content logs">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="../js/navbar.js"></script>
+    <script src="./js/panel.js"></script>
+</body>
+
+</html>

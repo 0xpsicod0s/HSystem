@@ -1,5 +1,6 @@
 import { Register, RegisterModel } from '../models/Register.js';
 import Login from '../models/Login.js';
+import { saveLog } from '../controllers/logController.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
@@ -22,6 +23,7 @@ export const login = async (req, res) => {
         const token = response.data.token;
         
         res.cookie('token', token, { httpOnly: true, path: '/' });
+        await saveLog(nickname, 'LOGIN', 'Usuário logado com sucesso', req);
         return res.status(200).json({ success: 'Login efetuado com sucesso!' });
     } catch(err) {
         return res.status(500).json({ error: 'Erro ao definir token: ' + err });

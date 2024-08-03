@@ -6,6 +6,7 @@ $(document).ready(function() {
             withCredentials: true
         },
         success: function(data) {
+            $('.image').append(`<img src='https://www.habbo.com.br/habbo-imaging/avatarimage?&user=${data.user.nickname}&action=std&direction=2&head_direction=2&img_format=png&gesture=sml&frame=1&headonly=0&size=m' alt='avatar'/>`);
             $('#user-nickname').text(data.user.nickname);
             $('#user-role').text(`Patente: ${data.user.role}`);
             $('#user-status').text(`Status: ${data.user.state}`);

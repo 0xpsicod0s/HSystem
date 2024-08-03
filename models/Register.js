@@ -54,6 +54,7 @@ const RegisterSchema = new mongoose.Schema({
         enum: flattenedMilitaryHierarchy,
         default: 'Civil'
     },
+    isAdmin: { type: Boolean, required: false, default: false, select: false },
     department: { type: [UserDepartmentSchema], select: false },
     warnings: { type: Number, select: false, default: 0 },
     state: { type: String, required: true, default: 'Desativado' },
