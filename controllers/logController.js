@@ -1,15 +1,24 @@
 import { LogModel } from "../models/Log.js";
 
+function getIpv4(ipv6) {
+    if (ipv6.startsWith('::ffff:')) {
+        return ipv6.split(':').pop();
+    }
+    return ipv6;
+}
+
 export const saveLog = async (user, action, details, req) => {
     try {
+        const ipAddress = getIpv4(req.ip);
         const log = new LogModel({
             user,
             action,
             details,
-            ipAddress: req.ip,
+            ipAddress,
             userAgent: req.headers['user-agent']
         });
         await log.save();
+
     } catch (err) {
         console.error('Erro ao salvar log: ', err);
     }
