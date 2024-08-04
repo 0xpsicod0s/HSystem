@@ -22,7 +22,7 @@ $(document).ready(function () {
                             <td data-label="Nick">${user.nickname}</td>
                             <td data-label="Email">${user.email}</td>
                             <td data-label="Patente">${user.role}</td>
-                            <td data-label="Acoes">
+                            <td data-label="Ações">
                                 <button class="button is-small is-info edit-button" data-id="${user._id}">Editar</button>
                                 <button class="button is-small is-danger delete-button" data-id="${user._id}">Excluir</button>
                             </td>
