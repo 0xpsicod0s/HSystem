@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Usuários | Painel Administrativo DOP</title>
+    <link rel="shortcut icon" href="../../img/icons-100.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="../../css/pages.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url=/index.html">
+    </noscript>
+</head>
+
+<body>
+
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="./panel.html" style="background-color: #1e272e;">
+                <img src="../../img/icons-100.png" alt="Logo" style="max-width: 100%; height: auto;">
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="control-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="control-menu" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="./documents.html">
+                    Documentos
+                </a>
+                <a class="navbar-item" href="./publications.html">
+                    Publicações
+                </a>
+                <a class="navbar-item" href="./user-management.html">
+                    Usuários
+                </a>
+                <a class="navbar-item" href="./logs.html">
+                    Logs
+                </a>
+                <a class="navbar-item" href="../index.html">
+                    Voltar ao Sistema
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <h1 class="title has-text-centered has-text-white">Gerenciamento de Usuários</h1>
+
+            <div class="box">
+                <h2 class="subtitle has-text-white">Pesquisar Usuários</h2>
+                <div class="field has-addons">
+                    <div class="control is-expanded">
+                        <input id="search-input" class="input" type="text" placeholder="Digite o nome de usuário">
+                    </div>
+                    <div class="control">
+                        <button id="search-btn" class="button is-primary">Pesquisar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box">
+                <h2 class="subtitle has-text-white">Lista de Usuários</h2>
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Patente</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-list">
+                    </tbody>
+                    <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+                        <a class="pagination-previous button" id="prev-page">Anterior</a>
+                        <a class="pagination-next button" id="next-page">Próximo</a>
+                        <ul class="pagination-list"></ul>
+                    </nav>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <div id="edit-user-modal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Editar Usuário</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <form id="edit-user-form">
+                    <input type="hidden" id="edit-user-id">
+                    <div class="field">
+                        <label class="label">Nome</label>
+                        <div class="control">
+                            <input class="input" type="text" id="edit-user-nickname" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Email</label>
+                        <div class="control">
+                            <input class="input" type="email" id="edit-user-email" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Patente</label>
+                        <div class="control">
+                            <input class="input" type="text" id="edit-user-role" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Papel</label>
+                        <div class="control">
+                            <div class="select">
+                                <select id="edit-user-role-select" required>
+                                    <option value="notSelected" selected disabled>Selecione um nível de permissão</option>
+                                    <option value="user">Usuário</option>
+                                    <option value="admin">Administrador</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" id="save-user-btn">Salvar</button>
+                <button class="button" id="cancel-edit-btn">Cancelar</button>
+            </footer>
+        </div>
+    
+    <script src="../js/navbar.js"></script>
+    <script src="js/userManagement.js"></script>
+</body>
+
+</html>

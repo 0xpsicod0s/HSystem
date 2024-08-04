@@ -18,7 +18,6 @@ export const saveLog = async (user, action, details, req) => {
             userAgent: req.headers['user-agent']
         });
         await log.save();
-
     } catch (err) {
         console.error('Erro ao salvar log: ', err);
     }

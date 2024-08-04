@@ -3,7 +3,7 @@ import { register, login, logout, authenticate } from '../controllers/authContro
 import { isAuthenticated, roleMiddleware, departmentMiddleware } from '../middlewares/auth.js';
 import { departmentParticipant, departmentsRequirements, getDocuments, getMembers, getClasses, editMember, removeMember, getClassPosting, getDepartment, isLeader } from '../controllers/departmentsController.js';
 import { searchUser, validateSearchUser, getMilitaries, requirements } from '../controllers/pagesControllers.js';
-import { usersActive } from '../controllers/panelController.js';
+import { usersActive, getUsers, deleteUser, editUser } from '../controllers/panelController.js';
 import { middlewareIsAdmin } from '../middlewares/panelMiddleware.js';
 import { getLogs } from '../controllers/logController.js';
 import { profile, reset, isAdmin } from '../controllers/userController.js';
@@ -44,6 +44,9 @@ router.post('/departments/removeMember', isAuthenticated, removeMember);
 
 // Rotas do painel administrativo
 router.get('/panel/usersActive', isAuthenticated, middlewareIsAdmin, usersActive);
+router.get('/panel/getUsers', isAuthenticated, middlewareIsAdmin, getUsers);
+router.delete('/panel/deleteUser/:userId', isAuthenticated, middlewareIsAdmin, deleteUser);
+router.put('/panel/editUser/:userId', isAuthenticated, middlewareIsAdmin, editUser);
 
 // Rota de logs
 router.get('/logs', isAuthenticated, middlewareIsAdmin, getLogs);
