@@ -8,15 +8,16 @@
     <link rel="shortcut icon" href="../../img/icons-100.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="/css/pages.css">
-    <script src="https://cdn.ckeditor.com/ckeditor5/35.0.0/classic/ckeditor.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jodit@4.0.12/build/jodit.min.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jodit@4.0.12/build/jodit.min.js"></script>
     <script src="../../pages/js/navbar.js" defer></script>
     <script src="../js/checkDepartment.js" defer></script>
     <noscript>
         <meta http-equiv="refresh" content="0;url=/index.html">
     </noscript>
     <style>
-        .ck-editor__editable_inline {
+        .jodit-wysiwyg {
             min-height: 400px;
             width: 100%;
             border: 1px solid #dbdbdb;
@@ -31,8 +32,7 @@
             <a class="navbar-item" href="#" style="background-color: #1e272e;">
                 <img src="../../img/icons-100.png" alt="Logo" style="max-width: 100%; height: auto;">
             </a>
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
-                data-target="control-menu">
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="control-menu">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
@@ -40,21 +40,11 @@
         </div>
         <div id="control-menu" class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item" href="/pages/index.html">
-                    Home
-                </a>
-                <a class="navbar-item" href="/pages/departments.html">
-                    Departamentos
-                </a>
-                <a class="navbar-item" href="/pages/requirements.html">
-                    Requerimentos
-                </a>
-                <a class="navbar-item" href="/pages/members.html">
-                    Membros
-                </a>
-                <a class="navbar-item" href="/pages/profile.html">
-                    Perfil
-                </a>
+                <a class="navbar-item" href="/pages/index.html">Home</a>
+                <a class="navbar-item" href="/pages/departments.html">Departamentos</a>
+                <a class="navbar-item" href="/pages/requirements.html">Requerimentos</a>
+                <a class="navbar-item" href="/pages/members.html">Membros</a>
+                <a class="navbar-item" href="/pages/profile.html">Perfil</a>
             </div>
         </div>
     </nav>
@@ -72,14 +62,13 @@
                         <div class="field">
                             <label class="label has-text-white">Nome da aula</label>
                             <div class="control">
-                                <input class="input" type="text" id="documentTitle"
-                                    placeholder="Nome da aula adicionada">
+                                <input class="input" type="text" id="documentTitle" placeholder="Nome da aula adicionada">
                             </div>
                         </div>
                         <div class="field">
                             <label class="label has-text-white">Conteúdo da Aula</label>
                             <div class="control">
-                                <textarea id="editor" class="ck-editor__editable_inline"></textarea>
+                                <textarea id="editor" class="jodit-wysiwyg"></textarea>
                             </div>
                         </div>
                         <div class="field is-grouped">
@@ -92,91 +81,46 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
     <script>
         $(document).ready(function () {
-            const editor = ClassicEditor
-                .create(document.querySelector('#editor'), {
-                    toolbar: {
-                        items: [
-                            'undo', 'redo',
-                            '|',
-                            'heading',
-                            '|',
-                            'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor',
-                            '|',
-                            'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'code',
-                            '|',
-                            'link', 'uploadImage', 'blockQuote', 'codeBlock',
-                            '|',
-                            'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent'
-                        ],
-                        shouldNotGroupWhenFull: false
-                    },
-                    heading: {
-                        options: [
-                            { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                            { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                            { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' }
-                        ]
-                    },
-                    fontFamily: {
-                        options: [
-                            'default',
-                            'Ubuntu, Arial, sans-serif',
-                            'Ubuntu Mono, Courier New, Courier, monospace'
-                        ]
-                    },
-                    fontColor: {
-                        colorPicker: {
-                            format: 'hex'
-                        }
-                    },
-                    language: 'pt-br',
-                    initialData: 'Adicione o conteúdo de seu documento aqui...',
-                    fontSize: {
-                        options: [
-                            'tiny',
-                            'small',
-                            'default',
-                            'big',
-                            'huge'
-                        ]
-                    },
-                })
-                .then(editor => {
-                    $('#saveDocument').on('click', function () {
-                        const dataToSend = ['adiciona_aula'];
-                        const departmentName = $('#departmentName').val();
-                        const className = $('#documentTitle').val();
-                        const classContent = editor.getData();
-                        dataToSend.push({ departmentName, className, classContent });
-                        console.log(dataToSend);
-                        $.ajax({
-                            method: 'POST',
-                            url: '/api/departments/requirements',
-                            xhrFields: {
-                                withCredentials: true
-                            },
-                            contentType: 'application/json; charset=utf-8',
-                            data: JSON.stringify(dataToSend),
-                            success: function (data) {
-                                successfulOperation('Aula adicionada com sucesso!');
-                                setTimeout(() => window.location.reload(), 2000);
-                            },
-                            error: function (data) {
-                                showError(data.responseJSON.error);
-                            }
-                        });
-                    });
-                })
-                .catch(error => {
-                    showError('Erro ao carregar o editor de texto');
-                });
+            const editor = new Jodit('#editor', {
+                toolbar: true,
+                height: 400,
+                uploader: {
+                    insertImageAsBase64URI: true
+                },
+                buttons: [
+                    'source', 'bold', 'italic', 'underline', '|', 'align', 'ul', 'ol', '|', 'link', 'image', '|', 'undo', 'redo'
+                ],
+                language: 'pt_BR'
+            });
 
+            $('#saveDocument').on('click', function () {
+                const dataToSend = ['adiciona_aula'];
+                const departmentName = $('#departmentName').val();
+                const className = $('#documentTitle').val();
+                const classContent = editor.value;
+                dataToSend.push({ departmentName, className, classContent });
+                $.ajax({
+                    method: 'POST',
+                    url: '/api/departments/requirements',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(dataToSend),
+                    success: function (data) {
+                        successfulOperation('Aula adicionada com sucesso!');
+                        setTimeout(() => window.location.reload(), 2000);
+                    },
+                    error: function (data) {
+                        showError(data.responseJSON.error);
+                    }
+                });
+            });
 
             $('#cancelDocument').on('click', () => window.history.back());
         });

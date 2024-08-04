@@ -9,13 +9,15 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="/css/pages.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jodit@3.6.8/build/jodit.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jodit@3.6.8/build/jodit.min.css">
     <script src="../../pages/js/navbar.js" defer></script>
     <script src="../js/checkDepartment.js" defer></script>
     <noscript>
         <meta http-equiv="refresh" content="0;url=/index.html">
     </noscript>
     <style>
-        .ck-editor__editable_inline {
+        .jodit-wysiwyg {
             min-height: 400px;
             width: 100%;
             border: 1px solid #dbdbdb;
@@ -82,7 +84,7 @@
                         <div class="field">
                             <label class="label has-text-white">Conteúdo da Aula</label>
                             <div class="control">
-                                <textarea id="editor" class="ck-editor__editable_inline"></textarea>
+                                <textarea id="editor" class="jodit-wysiwyg"></textarea>
                             </div>
                         </div>
                         <div class="field is-grouped">
@@ -95,93 +97,46 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </section>
-    <script src="https://cdn.ckeditor.com/ckeditor5/35.3.0/classic/ckeditor.js"></script>
-
     <script>
         $(document).ready(function () {
-            const editor = ClassicEditor
-                .create(document.querySelector('#editor'), {
-                    toolbar: {
-                        items: [
-                            'undo', 'redo',
-                            '|',
-                            'heading',
-                            '|',
-                            'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor',
-                            '|',
-                            'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'code',
-                            '|',
-                            'link', 'uploadImage', 'blockQuote', 'codeBlock',
-                            '|',
-                            'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent'
-                        ],
-                        shouldNotGroupWhenFull: false
-                    },
-                    heading: {
-                        options: [
-                            { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                            { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                            { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' }
-                        ]
-                    },
-                    fontFamily: {
-                        options: [
-                            'default',
-                            'Ubuntu, Arial, sans-serif',
-                            'Ubuntu Mono, Courier New, Courier, monospace'
-                        ]
-                    },
-                    fontColor: {
-                        colorPicker: {
-                            format: 'hex'
-                        }
-                    },
-                    language: 'pt-br',
-                    initialData: 'Adicione o conteúdo de seu documento aqui...',
-                    fontSize: {
-                        options: [
-                            'tiny',
-                            'small',
-                            'default',
-                            'big',
-                            'huge'
-                        ]
-                    },
-                })
-                .then(editor => {
-                    $('#saveDocument').on('click', function () {
-                        const dataToSend = ['adiciona_aula'];
-                        const departmentName = $('#departmentName').val();
-                        const className = $('#documentTitle').val();
-                        const classContent = editor.getData();
-                        dataToSend.push({ departmentName, className, classContent });
-                        console.log(dataToSend);
-                        $.ajax({
-                            method: 'POST',
-                            url: '/api/departments/requirements',
-                            xhrFields: {
-                                withCredentials: true
-                            },
-                            contentType: 'application/json; charset=utf-8',
-                            data: JSON.stringify(dataToSend),
-                            success: function (data) {
-                                successfulOperation('Aula adicionada com sucesso!');
-                                setTimeout(() => window.location.reload(), 2000);
-                            },
-                            error: function (data) {
-                                showError(data.responseJSON.error);
-                            }
-                        });
-                    });
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar o editor CKEditor:', error);
-                });
+            const editor = new Jodit('#editor', {
+                toolbar: true,
+                height: 400,
+                uploader: {
+                    insertImageAsBase64URI: true
+                },
+                buttons: [
+                    'source', 'bold', 'italic', 'underline', '|', 'align', 'ul', 'ol', '|', 'link', 'image', '|', 'undo', 'redo'
+                ],
+                language: 'pt_BR'
+            });
 
+            $('#saveDocument').on('click', function () {
+                const dataToSend = ['adiciona_aula'];
+                const departmentName = $('#departmentName').val();
+                const className = $('#documentTitle').val();
+                const classContent = editor.getEditorValue();
+                dataToSend.push({ departmentName, className, classContent });
+                $.ajax({
+                    method: 'POST',
+                    url: '/api/departments/requirements',
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(dataToSend),
+                    success: function (data) {
+                        successfulOperation('Aula adicionada com sucesso!');
+                        setTimeout(() => window.location.reload(), 2000);
+                    },
+                    error: function (data) {
+                        showError(data.responseJSON.error);
+                    }
+                });
+            });
 
             $('#cancelDocument').on('click', () => window.history.back());
         });
