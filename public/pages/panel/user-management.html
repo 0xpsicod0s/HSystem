@@ -12,6 +12,45 @@
     <noscript>
         <meta http-equiv="refresh" content="0;url=/index.html">
     </noscript>
+    <style>
+        @media (max-width: 768px) {
+            .table th,
+            .table td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .table thead {
+                display: none;
+            }
+
+            .table tr {
+                margin-bottom: 1rem;
+                display: block;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .table td {
+                text-align: right;
+                position: relative;
+                padding-left: 50%;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+
+            .table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 50%;
+                padding-left: 0.5rem;
+                font-weight: bold;
+                white-space: nowrap;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -70,7 +109,7 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nome</th>
+                            <th>Nickname</th>
                             <th>Email</th>
                             <th>Patente</th>
                             <th>Ações</th>
@@ -121,7 +160,8 @@
                         <div class="control">
                             <div class="select">
                                 <select id="edit-user-role-select" required>
-                                    <option value="notSelected" selected disabled>Selecione um nível de permissão</option>
+                                    <option value="notSelected" selected disabled>Selecione um nível de permissão
+                                    </option>
                                     <option value="user">Usuário</option>
                                     <option value="admin">Administrador</option>
                                 </select>
@@ -135,9 +175,9 @@
                 <button class="button" id="cancel-edit-btn">Cancelar</button>
             </footer>
         </div>
-    
-    <script src="../js/navbar.js"></script>
-    <script src="js/userManagement.js"></script>
+
+        <script src="../js/navbar.js"></script>
+        <script src="js/userManagement.js"></script>
 </body>
 
 </html>
