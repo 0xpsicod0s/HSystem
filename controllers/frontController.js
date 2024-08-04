@@ -26,7 +26,7 @@ export const panel = async (req, res) => {
 
     if (!user.isAdmin) return res.redirect('/pages/index.html');
     
-    const filePath = path.join(__dirname, '..', 'public', 'pages', 'panel', 'panel.html');
+    const filePath = path.join(__dirname, '..', 'public', 'pages', 'panel', req.path.split('/panel/')[1]);
     res.sendFile(filePath, err => {
         if (err) return res.status(404).send('Arquivo não encontrado');
     });

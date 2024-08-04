@@ -18,7 +18,7 @@ $(document).ready(function() {
             withCredentials: true
         },
         success: function (logs) {
-            for (let i = 0; i <= 5; i++) {
+            for (let i = 0; i < 5; i++) {
                 const log = logs[i];
                 const formattedDate = new Date(log.timestamp).toLocaleDateString('pt-BR');
                 $('.logs').append(`<p class="has-text-white">${formattedDate} - ${log.user} - ${log.action} - ${log.details}</p>`);
