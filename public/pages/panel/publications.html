@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Publicações | Painel Administrativo DOP</title>
+    <link rel="shortcut icon" href="../../img/icons-100.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="../../css/pages.css">
+    <script src="https://cdn.jsdelivr.net/npm/jodit@3.6.8/build/jodit.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jodit@3.6.8/build/jodit.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url=/index.html">
+    </noscript>
+    <style>
+        @media (max-width: 768px) {
+            .table th,
+            .table td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .table thead {
+                display: none;
+            }
+
+            .table tr {
+                margin-bottom: 1rem;
+                display: block;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .table td {
+                text-align: right;
+                position: relative;
+                padding-left: 50%;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+
+            .table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 50%;
+                padding-left: 0.5rem;
+                font-weight: bold;
+                white-space: nowrap;
+            }
+        }
+
+        .jodit-wysiwyg {
+            min-height: 300px;
+            border: 1px solid #dbdbdb;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="./panel.html" style="background-color: #1e272e;">
+                <img src="../../img/icons-100.png" alt="Logo" style="max-width: 100%; height: auto;">
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="control-menu">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <div id="control-menu" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="./documents.html">
+                    Documentos
+                </a>
+                <a class="navbar-item" href="./publications.html">
+                    Publicações
+                </a>
+                <a class="navbar-item" href="./user-management.html">
+                    Usuários
+                </a>
+                <a class="navbar-item" href="./logs.html">
+                    Logs
+                </a>
+                <a class="navbar-item" href="../index.html">
+                    Voltar ao Sistema
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section">
+        <div class="container">
+            <h1 class="title has-text-centered has-text-white">Gerenciamento de Publicações</h1>
+            <div class="box">
+                <h2 class="subtitle has-text-white">Lista de Publicações</h2>
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Postador</th>
+                            <th>Título</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="publication-list">
+                    </tbody>
+                </table>
+            </div>
+            <button id="new-pub" class="button is-pulled-right">Nova Publicação</button>
+        </div>
+    </section>
+
+    <div id="edit-publication-modal" class="modal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Editar Publicação</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <form id="edit-publication-form">
+                    <input type="hidden" id="edit-publication-id">
+                    <div class="field">
+                        <label class="label">Título</label>
+                        <div class="control">
+                            <input class="input" type="text" id="edit-publication-title" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Conteúdo</label>
+                        <div class="control">
+                            <div id="edit-editor" class="jodit-wysiwyg"></div>
+                        </div>
+                    </div>
+                </form>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" id="save-publication-btn">Salvar</button>
+                <button class="button" id="cancel-edit-btn">Cancelar</button>
+            </footer>
+        </div>
+    </div>
+    <script src="js/publications.js"></script>
+</body>
+
+</html>

@@ -117,7 +117,7 @@
                 const dataToSend = ['salva_documento'];
                 const departmentName = $('#departmentName').val();
                 const documentTitle = $('#documentTitle').val();
-                const documentContent = editor.value;
+                const documentContent = editor.getEditorValue();
                 dataToSend.push({ departmentName, documentTitle, documentContent });
                 $.ajax({
                     method: 'POST',

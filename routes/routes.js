@@ -3,7 +3,7 @@ import { register, login, logout, authenticate } from '../controllers/authContro
 import { isAuthenticated, roleMiddleware, departmentMiddleware } from '../middlewares/auth.js';
 import { departmentParticipant, departmentsRequirements, getDocuments, getMembers, getClasses, editMember, removeMember, getClassPosting, getDepartment, isLeader } from '../controllers/departmentsController.js';
 import { searchUser, validateSearchUser, getMilitaries, requirements } from '../controllers/pagesControllers.js';
-import { usersActive, getUsers, deleteUser, editUser } from '../controllers/panelController.js';
+import { usersActive, getUsers, deleteUser, editUser, addPublication, getPublications, getPublication, editPublication, deletePublication } from '../controllers/panelController.js';
 import { middlewareIsAdmin } from '../middlewares/panelMiddleware.js';
 import { getLogs } from '../controllers/logController.js';
 import { profile, reset, isAdmin } from '../controllers/userController.js';
@@ -47,6 +47,11 @@ router.get('/panel/usersActive', isAuthenticated, middlewareIsAdmin, usersActive
 router.get('/panel/getUsers', isAuthenticated, middlewareIsAdmin, getUsers);
 router.delete('/panel/deleteUser/:userId', isAuthenticated, middlewareIsAdmin, deleteUser);
 router.put('/panel/editUser/:userId', isAuthenticated, middlewareIsAdmin, editUser);
+router.get('/panel/getPublications', isAuthenticated, middlewareIsAdmin, getPublications);
+router.get('/panel/getPublication/:pubId', isAuthenticated, middlewareIsAdmin, getPublication);
+router.put('/panel/editPublication/:pubId', isAuthenticated, middlewareIsAdmin, editPublication);
+router.delete('/panel/deletePublication/:pubId', isAuthenticated, middlewareIsAdmin, deletePublication);
+router.post('/panel/publications', isAuthenticated, middlewareIsAdmin, addPublication);
 
 // Rota de logs
 router.get('/logs', isAuthenticated, middlewareIsAdmin, getLogs);

@@ -1,4 +1,5 @@
 import { RegisterModel, flattenedMilitaryHierarchy } from "../models/Register.js";
+import { System } from "../models/System.js";
 import validator from "validator";
 
 export const usersActive = async (req, res) => {
@@ -95,3 +96,9 @@ export const editUser = async (req, res) => {
         return res.status(500).json({ error: 'Houve um erro interno. Contate um desenvolvedor' });
     }
 };
+
+export const addPublication = async (req, res) => new System(req, res).addPublication();
+export const getPublications = async (req, res) => new System(req, res).getPublications();
+export const getPublication = async (req, res) => new System(req, res).getPublication();
+export const editPublication = async (req, res) => new System(req, res).editPublication();
+export const deletePublication = async (req, res) => new System(req, res).deletePublication();

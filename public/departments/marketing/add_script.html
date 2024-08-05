@@ -107,7 +107,7 @@
                 const dataToSend = ['adiciona_aula'];
                 const departmentName = $('#departmentName').val();
                 const className = $('#documentTitle').val();
-                const classContent = editor.value;
+                const classContent = editor.getEditorValue();
                 dataToSend.push({ departmentName, className, classContent });
                 $.ajax({
                     method: 'POST',

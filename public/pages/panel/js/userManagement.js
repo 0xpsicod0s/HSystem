@@ -1,6 +1,5 @@
 $(document).ready(function () {
     let currentPage = 1;
-    let searchTerm = '';
     const limit = 10;
 
     const fetchUsers = (page, searchTerm = '') => {
@@ -50,7 +49,7 @@ $(document).ready(function () {
     });
 
     $('#search-btn').click(function () {
-        searchTerm = $('#search-input').val().trim();
+        const searchTerm = $('#search-input').val().trim();
         fetchUsers(1, searchTerm);
     });
 
@@ -118,7 +117,6 @@ $(document).ready(function () {
                 error: function (err) {
                     $('.container').append(`<div id="errorDeleting" class="notification is-danger">${err.responseJSON.err}</div>`);
                     setTimeout(() => $('#errorDeleting').remove(), 3000);
-                    alert(`Erro ao excluir usuário: ${err.responseJSON.error}`);
                 }
             });
         }

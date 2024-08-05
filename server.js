@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import compression from 'compression';
+import helmet from 'helmet';
 import { fileURLToPath } from 'url';
 import routes from './routes/routes.js';
 import frontEndRoutes from './routes/frontEndRoutes.js';
@@ -10,7 +12,17 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(compression());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://code.jquery.com"],
+        },
+    }
+}));
 app.use(cookieParser());
 
 mongoose.connect(process.env.MONGODB_URL)
@@ -21,11 +33,6 @@ app.use('/', frontEndRoutes);
 app.use('/api/', routes);
 
 app.use(express.static(path.join(__dirname, 'public')));
-
-// app.get('*', (req, res) => {
-//     console.log('Rota não encontrada, redirecionando para index.html');
-//     res.sendFile(path.join(__dirname, 'public', 'index.html'));
-// });
 
 const PORT = process.env.PORT || 3000;
 app.on('mongodbConnect', function() {
