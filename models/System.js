@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import sanitize from 'sanitize-html';
 import { RegisterModel } from './Register.js';
+import { saveLog } from '../controllers/logController.js';
 
 const SystemSchema = new mongoose.Schema({
     type: {
@@ -82,10 +83,11 @@ export class System {
         if (!title || !content) return this.res.status(400).json({ error: 'Preencha todos os campos' });
 
         try {
-            const publisher = await RegisterModel.findById({ _id: this.req.userId }).select('nickname isAdmin');
-            if (!publisher.isAdmin) return this.res.status(403).json({ error: 'Você não tem permissão administrativa para isso' });
+            const publisher = await RegisterModel.findById({ _id: this.req.userId }).select('nickname');
+            if (!publisher) return this.res.status(403).json({ error: 'Você não tem permissão para isso' });
             
             await this.createRequirement('publicacao', title, publisher.nickname, this.cleanHtml(content));
+            await saveLog(publisher.nickname, 'ADD_PUB', `${publisher.nickname} adicionou uma nova publicação`, this.req);
             return this.res.status(201).json({ success: 'Nova publicação adicionada com sucesso!' });
         } catch (err) {
             return this.res.status(500).json({ error: 'Houve um erro interno. Contate um desenvolvedor' });
@@ -100,6 +102,9 @@ export class System {
         if (!title || !content) return this.res.status(400).json({ error: 'Preencha todos os campos' });
 
         try {
+            const editor = await RegisterModel.findById({ _id: this.req.userId }).select('nickname');
+            if (!editor) return this.res.status(403).json({ error: 'Você não tem permissão para isso' });
+
             const updateFields = {};
             if (title) updateFields.title = title;
             if (content) updateFields.details = this.cleanHtml(content);
@@ -116,6 +121,7 @@ export class System {
                 return this.res.status(404).json({ error: 'Publicação não encontrada' });
             }
 
+            await saveLog(editor.nickname, 'EDIT_PUB', `${editor.nickname} editou uma publicação`, this.req);
             return this.res.status(200).json({ success: 'Publicação atualizada com sucesso!' });
         } catch (err) {
             return this.res.status(500).json({ error: 'Houve um erro interno. Contate um desenvolvedor' });
