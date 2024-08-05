@@ -27,7 +27,6 @@ $(document).ready(function () {
             }
         });
     }
-
     fetchPublications();
 
     let editor;

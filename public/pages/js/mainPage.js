@@ -25,38 +25,68 @@ function showError(message) {
     $('.field').after($('<div>').addClass('notification is-danger').append(errorMessage));
 }
 
-$('#logout').on('click', function () {
-    $.ajax({
-        method: 'GET',
-        url: '/api/auth/logout',
-        xhrFields: {
-            withCredentials: true
-        }
-    });
-});
-
-$('.search').on('click', function (event) {
-    const searchUser = $(event.target.previousElementSibling).val().trim();
-    if (!searchUser) {
-        showError('Por favor, insira um nome de usuário');
-        return;
-    }
+$(document).ready(function () {
 
     $.ajax({
         method: 'GET',
-        url: `/api/search?user=${searchUser}`,
+        url: '/api/panel/getPublications',
         xhrFields: {
             withCredentials: true
         },
-        success: function (data) {
-            clearPreviousResults();
-            showUserProfile(data);
+        success: function (pubs) {
+            pubs.forEach(pub => {
+                const formattedDate = new Date(pub.date).toLocaleDateString('pt-BR');
+                $('#publications-area > p').after(`
+                    <div class="publication">
+                        <p style="color: #ecf0f1;">
+                            <strong style="color: #251D1C;">${pub.applicant}</strong>
+                            <small>${formattedDate}</small>
+                            <br>
+                            ${pub.title}
+                        </p>
+                    </div>
+                `);
+            });
         },
-        error: function (data) {
-            clearPreviousResults();
-            const response = $(document.createTextNode(data.responseJSON.error));
-            $('.field').after($(document.createElement('div')).addClass('notification is-danger'));
-            $('.notification').append(response);
+        error: function (error) {
+            console.log(error);
         }
     });
+
+    $('#logout').on('click', function () {
+        $.ajax({
+            method: 'GET',
+            url: '/api/auth/logout',
+            xhrFields: {
+                withCredentials: true
+            }
+        });
+    });
+    
+    $('.search').on('click', function (event) {
+        const searchUser = $(event.target.previousElementSibling).val().trim();
+        if (!searchUser) {
+            showError('Por favor, insira um nome de usuário');
+            return;
+        }
+    
+        $.ajax({
+            method: 'GET',
+            url: `/api/search?user=${searchUser}`,
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data) {
+                clearPreviousResults();
+                showUserProfile(data);
+            },
+            error: function (data) {
+                clearPreviousResults();
+                const response = $(document.createTextNode(data.responseJSON.error));
+                $('.field').after($(document.createElement('div')).addClass('notification is-danger'));
+                $('.notification').append(response);
+            }
+        });
+    });
 });
+
