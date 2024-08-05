@@ -8,9 +8,9 @@
     <link rel="shortcut icon" href="../../img/icons-100.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="/css/pages.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jodit@4.0.12/build/jodit.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jodit@3.6.8/build/jodit.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jodit@3.6.8/build/jodit.min.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jodit@4.0.12/build/jodit.min.js"></script>
     <script src="../../pages/js/navbar.js" defer></script>
     <script src="../js/checkDepartment.js" defer></script>
     <noscript>
@@ -89,59 +89,7 @@
             </div>
         </div>
     </section>
-    <script>
-        $(document).ready(function () {
-            const editor = new Jodit('#editor', {
-                toolbar: true,
-                height: 400,
-                uploader: {
-                    insertImageAsBase64URI: true
-                },
-                buttons: [
-                    'source', 'bold', 'italic', 'underline', '|', 'align', 'ul', 'ol', '|', 'link', 'image', '|', 'undo', 'redo'
-                ],
-                language: 'pt_BR'
-            });
-
-            $('#saveDocument').on('click', function () {
-                const dataToSend = ['adiciona_aula'];
-                const departmentName = $('#departmentName').val();
-                const className = $('#documentTitle').val();
-                const classContent = editor.getEditorValue();
-                dataToSend.push({ departmentName, className, classContent });
-                $.ajax({
-                    method: 'POST',
-                    url: '/api/departments/requirements',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify(dataToSend),
-                    success: function (data) {
-                        successfulOperation('Aula adicionada com sucesso!');
-                        setTimeout(() => window.location.reload(), 2000);
-                    },
-                    error: function (data) {
-                        showError(data.responseJSON.error);
-                    }
-                });
-            });
-
-            $('#cancelDocument').on('click', () => window.history.back());
-        });
-
-        function successfulOperation(message) {
-            if ($('.box .is-danger')) $('.box .is-danger').remove();
-            const successMessage = $(`<p>${message}</p>`);
-            $('.box').after($('<div>').addClass('notification is-success').css('margin-top', '20px').append(successMessage));
-        }
-
-        function showError(message) {
-            if ($('.box .is-danger')) $('.box .is-danger').remove();
-            const errorMessage = $(`<p>${message}</p>`);
-            $('.box').after($('<div>').addClass('notification is-danger').css('margin-top', '20px').append(errorMessage));
-        }
-    </script>
+    <script src="../js/scriptEditor.js"></script>
 </body>
 
 </html>
