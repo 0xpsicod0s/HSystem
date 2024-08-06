@@ -5,7 +5,6 @@ $.ajax({
         withCredentials: true
     },
     success: function (data) {
-        console.log(data);
         if (!data.length) return;
         data.forEach(function({ name, img, pathname }) {
             $('.main-box .columns').append(
