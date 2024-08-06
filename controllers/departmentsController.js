@@ -64,7 +64,7 @@ export const isLeader = async (req, res) => {
 
 export const departmentsRequirements = async (req, res) => new DepartmentRequirement(req, res).sendRequirement();
 
-export const getDocuments = async (req, res) => {
+export const getDocumentsDepartment = async (req, res) => {
     const { departmentName } = req.query;
     if (!departmentName) return res.status(400).json({ error: 'Query nao informada' });
 

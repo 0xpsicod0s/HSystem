@@ -102,3 +102,10 @@ export const getPublications = async (req, res) => new System(req, res).getPubli
 export const getPublication = async (req, res) => new System(req, res).getPublication();
 export const editPublication = async (req, res) => new System(req, res).editPublication();
 export const deletePublication = async (req, res) => new System(req, res).deletePublication();
+
+export const addDocument = async (req, res) => new System(req, res).addDocument();
+export const getDocuments = async (req, res) => new System(req, res).getDocuments();
+export const getDocument = async (req, res) => new System(req, res).getDocument();
+export const editDocument = async (req, res) => new System(req, res).editDocument();
+export const deleteDocument = async (req, res) => new System(req, res).deleteDocument();
+

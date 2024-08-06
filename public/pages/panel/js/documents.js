@@ -1,37 +1,38 @@
 $(document).ready(function () {
-    const fetchPublications = () => {
+    const fetchDocuments = () => {
         $.ajax({
             method: 'GET',
-            url: '/api/panel/getPublications',
+            url: '/api/panel/getDocuments',
             xhrFields: {
                 withCredentials: true
             },
             success: function (data) {
-                $('#publication-list').empty();
-                data.forEach((pub, index) => {
-                    $('#publication-list').append(`
+                console.log(data);
+                $('#documents-list').empty();
+                data.forEach((doc, index) => {
+                    $('#documents-list').append(`
                         <tr>
                             <td data-label="ID">${index}</td>
-                            <td data-label="Postador">${pub.applicant}</td>
-                            <td data-label="Título">${pub.title}</td>
+                            <td data-label="Postador">${doc.applicant}</td>
+                            <td data-label="Título">${doc.title}</td>
                             <td data-label="Ações">
-                                <button class="button is-small is-info edit-button" data-id="${pub._id}">Editar</button>
-                                <button class="button is-small is-danger delete-button" data-id="${pub._id}">Excluir</button>
+                                <button class="button is-small is-info edit-button" data-id="${doc._id}">Editar</button>
+                                <button class="button is-small is-danger delete-button" data-id="${doc._id}">Excluir</button>
                             </td>
                         </tr>
                     `);
                 });
             },
-            error: function () {
-                showError('Erro ao procurar por publicações.');
+            error: function (err) {
+                showError(err.responseJSON.error);
             }
         });
     }
-    fetchPublications();
+    fetchDocuments();
 
     let editor;
     $(document).on('click', '.edit-button', function () {
-        const pubId = $(this).data('id');
+        const docId = $(this).data('id');
 
         if (editor) editor.destruct();
         editor = new Jodit('#edit-editor', {
@@ -50,39 +51,39 @@ $(document).ready(function () {
 
         $.ajax({
             method: 'GET',
-            url: `/api/panel/getPublication/${pubId}`,
+            url: `/api/panel/getDocument/${docId}`,
             xhrFields: {
                 withCredentials: true
             },
-            success: function (pub) {
-                $('#edit-publication-id').val(pub._id);
-                $('#edit-publication-title').val(pub.title);
-                editor.value = pub.details;
+            success: function (doc) {
+                $('#edit-document-id').val(doc._id);
+                $('#edit-document-title').val(doc.title);
+                editor.value = doc.details;
             }
         });
 
-        $('#save-publication-btn').off('click').on('click', function () {
-            const id = $('#edit-publication-id').val();
-            const title = $('#edit-publication-title').val();
+        $('#save-document-btn').off('click').on('click', function () {
+            const id = $('#edit-document-id').val();
+            const title = $('#edit-document-title').val();
             const content = editor.value;
 
             if (!title || !content) {
-                $('.modal-card-foot').append('<div class="notification is-danger">Preencha todos os campos antes de salvar a publicação.</div>');
+                $('.modal-card-foot').append('<div class="notification is-danger">Preencha todos os campos antes de salvar o documento.</div>');
                 return;
             }
 
-            const publication = { id, title, content };
+            const document = { id, title, content };
 
             $.ajax({
                 method: 'PUT',
-                url: `/api/panel/editPublication/${id}`,
-                data: JSON.stringify(publication),
+                url: `/api/panel/editDocument/${id}`,
+                data: JSON.stringify(document),
                 contentType: 'application/json; charset=utf-8',
                 success: function (data) {
-                    $('#edit-publication-modal').removeClass('is-active');
+                    $('#edit-document-modal').removeClass('is-active');
                     successfulOperation(data.success);
                     setTimeout(() => $('.is-success').remove(), 3000);
-                    fetchPublications();
+                    fetchDocuments();
                 },
                 error: function (error) {
                     $('.modal-card-foot').append(`<div class="notification is-danger">${error.responseJSON.error}</div>`);
@@ -91,21 +92,21 @@ $(document).ready(function () {
 
         });
 
-        $('#edit-publication-modal').addClass('is-active');
+        $('#edit-document-modal').addClass('is-active');
     });
 
     $(document).on('click', '.delete-button', function () {
-        const pubId = $(this).data('id');
+        const docId = $(this).data('id');
         $.ajax({
             method: 'DELETE',
-            url: `/api/panel/deletePublication/${pubId}`,
+            url: `/api/panel/deleteDocument/${docId}`,
             xhrFields: {
                 withCredentials: true
             },
             success: function (data) {
                 successfulOperation(data.success);
                 setTimeout(() => $('.is-success').remove(), 3000);
-                fetchPublications();
+                fetchDocuments();
             },
             error: function (err) {
                 showError(err.responseJSON.error);
@@ -114,35 +115,35 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.delete, #cancel-edit-btn', function () {
-        $('#edit-publication-modal').removeClass('is-active');
+        $('#edit-document-modal').removeClass('is-active');
         if (editor) {
             editor.destruct();
             editor = null;
         }
     });
 
-    $('#new-pub').on('click', function () {
+    $('#new-doc').on('click', function () {
         $('.container').html(`
             <div class="box">
-                <h2 class="title has-text-centered has-text-white">Adicionar Nova Publicação</h2>
+                <h2 class="title has-text-centered has-text-white">Adicionar Novo Documento</h2>
                 <div class="field">
-                    <label class="label has-text-white">Título da Publicação</label>
+                    <label class="label has-text-white">Título do Documento</label>
                     <div class="control">
-                        <input class="input" type="text" id="publicationTitle" placeholder="Título da Publicação">
+                        <input class="input" type="text" id="documentTitle" placeholder="Título do Documento">
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label has-text-white">Conteúdo da Publicação</label>
+                    <label class="label has-text-white">Conteúdo do Documento</label>
                     <div class="control">
                         <div id="editor" class="jodit-wysiwyg"></div>
                     </div>
                 </div>
                 <div class="field is-grouped">
                     <div class="control">
-                        <button class="button is-link" id="addPublication">Adicionar Publicação</button>
+                        <button class="button is-link" id="addDocument">Adicionar Documento</button>
                     </div>
                     <div class="control">
-                        <button class="button is-link is-light" id="cancelPublication">Cancelar</button>
+                        <button class="button is-link is-light" id="cancelDocument">Cancelar</button>
                     </div>
                 </div>
             </div>    
@@ -162,34 +163,34 @@ $(document).ready(function () {
             language: 'pt_BR'
         });
 
-        $('#addPublication').on('click', function () {
-            const title = $('#publicationTitle').val();
+        $('#addDocument').on('click', function () {
+            const title = $('#documentTitle').val();
             const content = newEditor.getEditorValue();
             if (!title || !content) {
-                showError('Preencha todos os campos antes de adicionar a publicação.');
+                showError('Preencha todos os campos antes de adicionar o documento.');
                 return;
             }
 
-            const publication = { title, content };
+            const document = { title, content };
             $.ajax({
                 method: 'POST',
-                url: '/api/panel/addPublication',
+                url: '/api/panel/addDocument',
                 xhrFields: {
                     withCredentials: true
                 },
-                data: JSON.stringify(publication),
+                data: JSON.stringify(document),
                 contentType: 'application/json; charset=utf-8',
                 success: function (data) {
                     successfulOperation(data.success);
                     setTimeout(() => window.location.reload(), 3000);
                 },
-                error: function (err) {
-                    showError(err.responseJSON.error);
+                error: function () {
+                    showError('Erro ao adicionar documento.');
                 }
             });
         });
 
-        $('#cancelPublication').on('click', () => window.location.reload())
+        $('#cancelDocument').on('click', () => window.location.reload())
     });
 
     function showError(message) {

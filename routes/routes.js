@@ -1,9 +1,9 @@
 import express from 'express';
 import { register, login, logout, authenticate } from '../controllers/authController.js';
 import { isAuthenticated, roleMiddleware, departmentMiddleware } from '../middlewares/auth.js';
-import { departmentParticipant, departmentsRequirements, getDocuments, getMembers, getClasses, editMember, removeMember, getClassPosting, getDepartment, isLeader } from '../controllers/departmentsController.js';
-import { searchUser, validateSearchUser, getMilitaries, requirements } from '../controllers/pagesControllers.js';
-import { usersActive, getUsers, deleteUser, editUser, addPublication, getPublications, getPublication, editPublication, deletePublication } from '../controllers/panelController.js';
+import { departmentParticipant, departmentsRequirements, getDocumentsDepartment, getMembers, getClasses, editMember, removeMember, getClassPosting, getDepartment, isLeader } from '../controllers/departmentsController.js';
+import { searchUser, validateSearchUser, getMilitaries, requirements, showDocument, showPublication } from '../controllers/pagesControllers.js';
+import { usersActive, getUsers, deleteUser, editUser, addPublication, getPublications, getPublication, editPublication, deletePublication, getDocuments, getDocument, editDocument, addDocument } from '../controllers/panelController.js';
 import { middlewareIsAdmin } from '../middlewares/panelMiddleware.js';
 import { getLogs } from '../controllers/logController.js';
 import { profile, reset, isAdmin } from '../controllers/userController.js';
@@ -26,12 +26,14 @@ router.post('/user/reset', isAuthenticated, reset);
 router.get('/search', isAuthenticated, roleMiddleware(militaryHierarchy), validateSearchUser, searchUser);
 router.get('/members', isAuthenticated, getMilitaries);
 router.get('/departmentParticipant', isAuthenticated, departmentMiddleware(departments), departmentParticipant);
+router.get('/doc/:link', isAuthenticated, showDocument);
+router.get('/pub/:link', isAuthenticated, showPublication);
 router.post('/requirements', isAuthenticated, requirements);
 
 
 // Rotas dos departamentos
 router.post('/departments/requirements', isAuthenticated, departmentMiddleware(departments), departmentsRequirements);
-router.get('/departments/getDocuments/', isAuthenticated, departmentMiddleware(departments), getDocuments);
+router.get('/departments/getDocuments/', isAuthenticated, departmentMiddleware(departments), getDocumentsDepartment);
 router.get('/departments/getMembers', isAuthenticated, departmentMiddleware(departments), getMembers);
 router.get('/departments/getClasses', isAuthenticated, departmentMiddleware(departments), getClasses);
 router.get('/departments/getClassPosting', isAuthenticated, departmentMiddleware(departments), getClassPosting);
@@ -47,11 +49,18 @@ router.get('/panel/usersActive', isAuthenticated, middlewareIsAdmin, usersActive
 router.get('/panel/getUsers', isAuthenticated, middlewareIsAdmin, getUsers);
 router.delete('/panel/deleteUser/:userId', isAuthenticated, middlewareIsAdmin, deleteUser);
 router.put('/panel/editUser/:userId', isAuthenticated, middlewareIsAdmin, editUser);
+
 router.get('/panel/getPublications', isAuthenticated, middlewareIsAdmin, getPublications);
 router.get('/panel/getPublication/:pubId', isAuthenticated, middlewareIsAdmin, getPublication);
 router.put('/panel/editPublication/:pubId', isAuthenticated, middlewareIsAdmin, editPublication);
 router.delete('/panel/deletePublication/:pubId', isAuthenticated, middlewareIsAdmin, deletePublication);
-router.post('/panel/publications', isAuthenticated, middlewareIsAdmin, addPublication);
+router.post('/panel/addPublication', isAuthenticated, middlewareIsAdmin, addPublication);
+
+router.get('/panel/getDocuments', isAuthenticated, middlewareIsAdmin, getDocuments);
+router.get('/panel/getDocument/:docId', isAuthenticated, middlewareIsAdmin, getDocument);
+router.put('/panel/editDocument/:docId', isAuthenticated, middlewareIsAdmin, editDocument);
+router.delete('/panel/deleteDocument/:pubId', isAuthenticated, middlewareIsAdmin, deletePublication);
+router.post('/panel/addDocument', isAuthenticated, middlewareIsAdmin, addDocument);
 
 // Rota de logs
 router.get('/logs', isAuthenticated, middlewareIsAdmin, getLogs);

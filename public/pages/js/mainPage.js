@@ -42,14 +42,30 @@ $(document).ready(function () {
                             <strong style="color: #251D1C;">${pub.applicant}</strong>
                             <small>${formattedDate}</small>
                             <br>
-                            ${pub.title}
+                            ${pub.title} | <a href='/pages/pub/publication.html?link=${pub.link}'>Ler</a>
                         </p>
                     </div>
                 `);
             });
+        }
+    });
+
+    $.ajax({
+        method: 'GET',
+        url: '/api/panel/getDocuments',
+        xhrFields: {
+            withCredentials: true
         },
-        error: function (error) {
-            console.log(error);
+        success: function (docs) {
+            docs.forEach(doc => {
+                const formattedDate = new Date(doc.date).toLocaleDateString('pt-BR');
+                $('#documents-area > p').after(`
+                    <div class="document has-text-white">
+                        <p>${doc.title} | ${formattedDate}</p>
+                        <a href="/pages/doc/document.html?link=${doc.link}">Ler</a>
+                    </div>
+                `);
+            });
         }
     });
 
