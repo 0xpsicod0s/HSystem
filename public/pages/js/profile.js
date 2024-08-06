@@ -13,6 +13,7 @@ $(document).ready(function() {
             $('#user-createdAt').text(`Data de Criação: ${new Date(data.user.createdAt).toLocaleDateString('pt-BR')}`);
 
             if (data.courses.length === 0) {
+                $('#approvedCourses').empty();
                 $('#approvedCourses').append('<div class="has-text-white"><p>Você não foi aprovado em nenhum curso</p></div>');
             }
             data.courses.forEach(({ data: { typeOfClass } }) => {

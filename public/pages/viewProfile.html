@@ -4,22 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Principal | DOP</title>
+    <title>Perfil do Usuário | DOP</title>
     <link rel="shortcut icon" href="../img/icons-100.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="../css/pages.css">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="js/controlPanel.js"></script>
     <noscript>
         <meta http-equiv="refresh" content="0;url=/index.html">
     </noscript>
-    <script src="js/controlPanel.js"></script>
 </head>
 
 <body>
 
     <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-            <a class="navbar-item image" href="#" style="background-color: #1e272e;">
+            <a class="navbar-item" href="#" style="background-color: #1e272e;">
+                <img src="../img/icons-100.png" alt="Logo" style="max-width: 100%; height: auto;">
             </a>
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
                 data-target="control-menu">
@@ -48,6 +49,7 @@
             </div>
         </div>
     </nav>
+
     <section class="section">
         <div class="container">
             <div class="columns is-centered">
@@ -56,43 +58,50 @@
                         <img src="../img/icons-100.png" alt="Logo" style="width: 100px; height: auto;">
                     </div>
                     <div class="main-box">
-                        <h1 class="title has-text-centered has-text-white">Página Principal</h1>
-                        <div class="field">
-                            <label class="label has-text-white">Pesquisar Usuários</label>
-                            <div class="control">
-                                <input class="input" type="text" placeholder="Digite o nome de usuário">
-                                <button class="button search is-primary box">Pesquisar</button>
+                        <h1 class="title has-text-centered has-text-white">Perfil do Usuário</h1>
+                        <div class="box has-background-dark">
+                            <article class="media">
+                                <figure class="media-left">
+                                    <p class="image is-64x64">
+                                    </p>
+                                </figure>
+                                <div class="media-content">
+                                    <div class="content">
+                                        <p>
+                                            <strong id="user-nickname" class="has-text-white"></strong><br>
+                                            <small id="user-role" class="has-text-white">Patente: </small><br>
+                                            <small id="user-status" class="has-text-white">Status: </small><br>
+                                            <small id="user-createdAt" class="has-text-white">Data de Criação: </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                        
+                        <div class="box has-background-dark">
+                            <h2 class="subtitle has-text-white">Cursos Aprovados</h2>
+                            <div class="content" id="approvedCourses">
+                                <p class="has-text-white">Nenhum curso aprovado.</p>
                             </div>
                         </div>
-                        <div class="columns">
-                            <div class="column">
-                                <div class="box">
-                                    <h2 class="subtitle has-text-white">Publicações</h2>
-                                    <div id="publications-area" class="content">
-                                        <p class="has-text-white">Não perca nenhuma novidade! Veja as novas publicações aqui.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="column">
-                                <div class="box">
-                                    <h2 class="subtitle has-text-white">Documentos</h2>
-                                    <div id="documents-area" class="content">
-                                        <p class="has-text-white">Aqui serão exibidos os documentos disponíveis.</p>
-                                    </div>
-                                </div>
-                            </div>
 
+                        <div class="box has-background-dark">
+                            <h2 class="subtitle has-text-white">Departamentos Participantes</h2>
+                            <div class="content" id="departments-participants">
+                                <p class="has-text-white">Nenhum departamento participante.</p>
+                            </div>
                         </div>
-                        <div class="control">
-                            <a id="logout" href="../index.html" class="button is-primary box">Sair</a>
+
+                        <div class="control has-text-centered">
+                            <a id="back" href="./index.html" class="button is-primary box">Voltar</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    <script src="js/viewProfile.js"></script>
     <script src="js/navbar.js"></script>
-    <script src="js/mainPage.js"></script>
 </body>
 
 </html>

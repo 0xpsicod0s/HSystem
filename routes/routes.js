@@ -6,7 +6,7 @@ import { searchUser, validateSearchUser, getMilitaries, requirements, showDocume
 import { usersActive, getUsers, deleteUser, editUser, addPublication, getPublications, getPublication, editPublication, deletePublication, getDocuments, getDocument, editDocument, addDocument } from '../controllers/panelController.js';
 import { middlewareIsAdmin } from '../middlewares/panelMiddleware.js';
 import { getLogs } from '../controllers/logController.js';
-import { profile, reset, isAdmin } from '../controllers/userController.js';
+import { profile, reset, isAdmin, viewProfile } from '../controllers/userController.js';
 import { militaryHierarchy, departments } from '../models/Register.js';
 
 const router = express.Router();
@@ -20,6 +20,7 @@ router.post('/authenticate', authenticate);
 // Rotas do perfil
 router.get('/user/profile', isAuthenticated, profile);
 router.get('/isAdmin', isAuthenticated, isAdmin);
+router.get('/user/:nick', isAuthenticated, viewProfile);
 router.post('/user/reset', isAuthenticated, reset);
 
 // Rotas internas do system

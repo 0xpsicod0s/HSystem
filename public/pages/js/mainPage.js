@@ -13,9 +13,11 @@ function showUserProfile(data) {
             <p><strong>Patente:</strong> ${data.role}</p>
             <p><strong>Status:</strong> ${data.state}</p>
             <p><strong>Admissão:</strong> ${new Date(data.createdAt).toLocaleDateString()}</p>
+            <button class="button is-link is-rounded mt-2">Ver perfil</button>
         </div>
     `);
     $('.field').after($('<div>').addClass('profile-summary').append(htmlString));
+    $('.profile-summary button').click(() => window.location.href = `/pages/viewProfile.html?nick=${data.nickname}`);
 }
 
 function showError(message) {

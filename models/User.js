@@ -54,4 +54,23 @@ export class User {
             return this.res.status(500).json({ error: 'Houve um erro interno. Contate um responsavel' });
         }
     }
+
+    async viewProfile() {
+        try {
+            const { nick } = this.req.params;
+            if (!nick) return this.res.status(400).json({ error: 'Nenhum nick especificado' });
+
+            const findUser = await RegisterModel.findOne({ nickname: nick }).select('-_id +role +department');
+            if (!findUser) return this.res.status(404).json({ error: 'Militar não encontrado' });
+
+            const findCourses = await RequirementModel.find({
+                type: 'postagem_de_aulas',
+                'data.militaryNickname': findUser.nickname
+            }).select('-_id data');
+
+            return this.res.status(200).json({ user: findUser, courses: findCourses });
+        } catch(err) {
+            return this.res.status(500).json({ error: 'Houve um erro interno. Contate um responsavel' });
+        }
+    }
 }
