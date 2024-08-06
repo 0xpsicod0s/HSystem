@@ -45,42 +45,55 @@ async function registerUser(data) {
     }
 }
 
-const form = $('form');
-form.on('submit', function (event) {
-    event.preventDefault();
-    $('.help').remove();
-
-    if (!validateForm()) {
-        const error = $('<p class="help is-danger">Preencha todos os campos!</p>');
-        form.append(error);
-        return;
+$(document).ready(function () {
+    function generateRandomCode() {
+        const prefix = 'DOP-';
+        const randomNumber = Math.floor(Math.random() * 10000);
+        const formattedNumber = randomNumber.toString().padStart(4, '0');
+        return prefix + formattedNumber;
     }
+    $('#mission-code').text(generateRandomCode());
 
-    const inputEmail = $('input[type="email"]').val().trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(inputEmail)) {
-        const error = $('<p class="help is-danger">Digite um e-mail valido</p>');
-        form.append(error);
-        return;
-    }
-
-    const inputPassword = $('input[name="password"]').val().trim();
-    const inputRepeatPassword = $('input[name="confirm-password"]').val().trim();
-    if (inputPassword !== inputRepeatPassword) {
-        const error = $('<p class="help is-danger">As senhas não coincidem</p>');
-        form.append(error);
-        return;
-    }
+    const form = $('form');
+    form.on('submit', function (event) {
+        event.preventDefault();
+        $('.help').remove();
     
-    const inputNickname = $('input[name="nickname"]').val().trim();
-    const dataToBeSent = {
-        nickname: inputNickname,
-        email: inputEmail,
-        password: inputPassword
-    }
+        if (!validateForm()) {
+            const error = $('<p class="help is-danger">Preencha todos os campos!</p>');
+            form.append(error);
+            return;
+        }
     
-    const loadingMessage = $('<div class="notification is-info">Carregando...</div>');
-    $('.login-box').append(loadingMessage);
+        const inputEmail = $('input[type="email"]').val().trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(inputEmail)) {
+            const error = $('<p class="help is-danger">Digite um e-mail valido</p>');
+            form.append(error);
+            return;
+        }
+    
+        const inputPassword = $('input[name="password"]').val().trim();
+        const inputRepeatPassword = $('input[name="confirm-password"]').val().trim();
+        if (inputPassword !== inputRepeatPassword) {
+            const error = $('<p class="help is-danger">As senhas não coincidem</p>');
+            form.append(error);
+            return;
+        }
+        
+        const inputNickname = $('input[name="nickname"]').val().trim();
+        const dataToBeSent = {
+            nickname: inputNickname,
+            email: inputEmail,
+            password: inputPassword,
+            code: $('#mission-code').text()
+        }
+        
+        const loadingMessage = $('<div class="notification is-info">Carregando...</div>');
+        $('.login-box').append(loadingMessage);
+    
+        registerUser(dataToBeSent);
+    });
 
-    registerUser(dataToBeSent);
 });
+

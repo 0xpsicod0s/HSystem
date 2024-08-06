@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
+import axios from 'axios';
 
 export const militaryHierarchy = [
     'Civil',
@@ -34,11 +35,11 @@ export const departments = [
     'Patrulha'
 ];
 
-export const flattenedMilitaryHierarchy = (function() {
+export const flattenedMilitaryHierarchy = (function () {
     return militaryHierarchy.flatMap(rank => Array.isArray(rank) ? rank : [rank]);
 }());
 
-const UserDepartmentSchema = new mongoose.Schema({ 
+const UserDepartmentSchema = new mongoose.Schema({
     role: { type: String, required: true, enum: ['Lider', 'Vice-Lider', 'Instrutor', 'Membro'] },
     department: { type: String, required: true, enum: departments }
 }, { _id: false });
@@ -47,7 +48,7 @@ const RegisterSchema = new mongoose.Schema({
     nickname: { type: String, required: true, unique: true },
     email: { type: String, required: true, lowercase: true, select: false, default: 'invalid' },
     password: { type: String, required: true, select: false, default: 'invalid' },
-    role: { 
+    role: {
         type: String,
         required: true,
         select: false,
@@ -67,16 +68,35 @@ export class Register {
         this.body = body;
         this.error = false;
         this.res = res;
+        this.prefix = 'DOP-'
     }
+
+    async verifyHabboMission(nickname, code) {
+        try {
+            const response = await axios.get(`https://www.habbo.com.br/api/public/users?name=${nickname}`);
+            const userData = response.data;
+
+            return userData.motto === code;
+        } catch (error) {
+            console.error('Erro ao verificar missão do Habbo:', error);
+            return false;
+        }
+    };
 
     async register() {
         try {
-            if (this.validate() && await this.userExists()) {
-                this.body.password = await bcrypt.hash(this.body.password, await bcrypt.genSalt());
-                await RegisterModel.create(this.body);
-                return this.res.status(201).json({ success: 'Conta registrada com sucesso!' });
+            if (!await this.validate()) return;
+            if (!await this.userExists()) return;
+
+            this.body.password = await bcrypt.hash(this.body.password, await bcrypt.genSalt());
+            const registrationData = {
+                nickname: this.body.nickname,
+                email: this.body.email,
+                password: this.body.password
             }
-        } catch(err) {
+            await RegisterModel.create(registrationData);
+            return this.res.status(201).json({ success: 'Conta registrada com sucesso!' });
+        } catch (err) {
             return this.res.status(500).json({ error: 'Erro interno' });
         }
     }
@@ -85,17 +105,22 @@ export class Register {
         const { nickname, email } = this.body;
         const user = await RegisterModel.findOne({ $or: [{ nickname }, { email }] });
         if (user) {
-            this.res.status(400).json({ error: 'Usuario ja existente, tente novamente!' }); 
+            this.res.status(400).json({ error: 'Usuario ja existente, tente novamente!' });
             this.error = true;
             return false;
         }
         return true;
     }
 
-    validate() {
+    async validate() {
         this.cleanUp();
         if (!this.body.nickname || !this.body.email || !this.body.password) {
             this.res.status(400).json({ error: 'Preencha todos os campos' });
+            this.error = true;
+            return false;
+        }
+        if (!this.body.code) {
+            this.res.status(400).json({ error: 'Código de missão obrigatório' });
             this.error = true;
             return false;
         }
@@ -106,6 +131,20 @@ export class Register {
         }
         if (this.body.password.length < 8) {
             this.res.status(400).json({ error: 'A senha precisa ter mais que 8 caracteres' });
+            this.error = true;
+            return false;
+        }
+
+        const isCodeValid = this.body.code.startsWith(this.prefix);
+        if (!isCodeValid) {
+            this.res.status(400).json({ error: 'Código inválido' });
+            this.error = true;
+            return false;
+        }
+
+        const isMissionCorrect = await this.verifyHabboMission(this.body.nickname, this.body.code);
+        if (!isMissionCorrect) {
+            this.res.status(400).json({ error: 'Código de missão incorreto' });
             this.error = true;
             return false;
         }
@@ -121,7 +160,8 @@ export class Register {
         this.body = {
             email: this.body.email,
             nickname: this.body.nickname,
-            password: this.body.password
+            password: this.body.password,
+            code: this.body.code
         }
     }
 }
