@@ -1,7 +1,7 @@
 import { RegisterModel } from '../models/Register.js';
 import { Members } from '../models/Members.js';
 import { Requirements } from '../models/Requirements.js';
-import { SystemModel } from '../models/System.js';
+import { System, SystemModel } from '../models/System.js';
 import { validationResult, query } from 'express-validator';
 
 export const searchUser = async (req, res) => {
@@ -38,6 +38,9 @@ export const getMilitaries = async (req, res) => {
     const members = new Members(req, res);
     members.getMilitaries();
 }
+
+export const getPublications = async (req, res) => new System(req, res).getPublications();
+export const getDocuments = async (req, res) => new System(req, res).getDocuments();
 
 export const showDocument = async (req, res) => {
     try {

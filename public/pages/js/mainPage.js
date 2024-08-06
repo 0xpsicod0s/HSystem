@@ -31,7 +31,7 @@ $(document).ready(function () {
 
     $.ajax({
         method: 'GET',
-        url: '/api/panel/getPublications',
+        url: '/api/getPublications',
         xhrFields: {
             withCredentials: true
         },
@@ -54,7 +54,7 @@ $(document).ready(function () {
 
     $.ajax({
         method: 'GET',
-        url: '/api/panel/getDocuments',
+        url: '/api/getDocuments',
         xhrFields: {
             withCredentials: true
         },

@@ -2,8 +2,8 @@ import express from 'express';
 import { register, login, logout, authenticate } from '../controllers/authController.js';
 import { isAuthenticated, roleMiddleware, departmentMiddleware } from '../middlewares/auth.js';
 import { departmentParticipant, departmentsRequirements, getDocumentsDepartment, getMembers, getClasses, editMember, removeMember, getClassPosting, getDepartment, isLeader } from '../controllers/departmentsController.js';
-import { searchUser, validateSearchUser, getMilitaries, requirements, showDocument, showPublication } from '../controllers/pagesControllers.js';
-import { usersActive, getUsers, deleteUser, editUser, addPublication, getPublications, getPublication, editPublication, deletePublication, getDocuments, getDocument, editDocument, addDocument } from '../controllers/panelController.js';
+import { searchUser, validateSearchUser, getMilitaries, requirements, showDocument, showPublication, getPublications, getDocuments } from '../controllers/pagesControllers.js';
+import panelController from '../controllers/panelController.js';
 import { middlewareIsAdmin } from '../middlewares/panelMiddleware.js';
 import { getLogs } from '../controllers/logController.js';
 import { profile, reset, isAdmin, viewProfile } from '../controllers/userController.js';
@@ -29,6 +29,8 @@ router.get('/members', isAuthenticated, getMilitaries);
 router.get('/departmentParticipant', isAuthenticated, departmentMiddleware(departments), departmentParticipant);
 router.get('/doc/:link', isAuthenticated, showDocument);
 router.get('/pub/:link', isAuthenticated, showPublication);
+router.get('/getPublications', isAuthenticated, getPublications);
+router.get('/getDocuments', isAuthenticated, getDocuments);
 router.post('/requirements', isAuthenticated, requirements);
 
 
@@ -46,22 +48,22 @@ router.post('/departments/editMember', isAuthenticated, editMember);
 router.post('/departments/removeMember', isAuthenticated, removeMember);
 
 // Rotas do painel administrativo
-router.get('/panel/usersActive', isAuthenticated, middlewareIsAdmin, usersActive);
-router.get('/panel/getUsers', isAuthenticated, middlewareIsAdmin, getUsers);
-router.delete('/panel/deleteUser/:userId', isAuthenticated, middlewareIsAdmin, deleteUser);
-router.put('/panel/editUser/:userId', isAuthenticated, middlewareIsAdmin, editUser);
+router.get('/panel/usersActive', isAuthenticated, middlewareIsAdmin, panelController.usersActive);
+router.get('/panel/getUsers', isAuthenticated, middlewareIsAdmin, panelController.getUsers);
+router.delete('/panel/deleteUser/:userId', isAuthenticated, middlewareIsAdmin, panelController.deleteUser);
+router.put('/panel/editUser/:userId', isAuthenticated, middlewareIsAdmin, panelController.editUser);
 
-router.get('/panel/getPublications', isAuthenticated, middlewareIsAdmin, getPublications);
-router.get('/panel/getPublication/:pubId', isAuthenticated, middlewareIsAdmin, getPublication);
-router.put('/panel/editPublication/:pubId', isAuthenticated, middlewareIsAdmin, editPublication);
-router.delete('/panel/deletePublication/:pubId', isAuthenticated, middlewareIsAdmin, deletePublication);
-router.post('/panel/addPublication', isAuthenticated, middlewareIsAdmin, addPublication);
+router.get('/panel/getPublications', isAuthenticated, middlewareIsAdmin, panelController.getPublications);
+router.get('/panel/getPublication/:pubId', isAuthenticated, middlewareIsAdmin, panelController.getPublication);
+router.put('/panel/editPublication/:pubId', isAuthenticated, middlewareIsAdmin, panelController.editPublication);
+router.delete('/panel/deletePublication/:pubId', isAuthenticated, middlewareIsAdmin, panelController.deletePublication);
+router.post('/panel/addPublication', isAuthenticated, middlewareIsAdmin, panelController.addPublication);
 
-router.get('/panel/getDocuments', isAuthenticated, middlewareIsAdmin, getDocuments);
-router.get('/panel/getDocument/:docId', isAuthenticated, middlewareIsAdmin, getDocument);
-router.put('/panel/editDocument/:docId', isAuthenticated, middlewareIsAdmin, editDocument);
-router.delete('/panel/deleteDocument/:pubId', isAuthenticated, middlewareIsAdmin, deletePublication);
-router.post('/panel/addDocument', isAuthenticated, middlewareIsAdmin, addDocument);
+router.get('/panel/getDocuments', isAuthenticated, middlewareIsAdmin, panelController.getDocuments);
+router.get('/panel/getDocument/:docId', isAuthenticated, middlewareIsAdmin, panelController.getDocument);
+router.put('/panel/editDocument/:docId', isAuthenticated, middlewareIsAdmin, panelController.editDocument);
+router.delete('/panel/deleteDocument/:pubId', isAuthenticated, middlewareIsAdmin, panelController.deletePublication);
+router.post('/panel/addDocument', isAuthenticated, middlewareIsAdmin, panelController.addDocument);
 
 // Rota de logs
 router.get('/logs', isAuthenticated, middlewareIsAdmin, getLogs);
