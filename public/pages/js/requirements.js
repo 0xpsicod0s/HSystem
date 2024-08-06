@@ -150,7 +150,7 @@ $(document).ready(function () {
                     <div class="field">
                         <label class="label has-text-white">Preço</label>
                         <div class="control">
-                            <input class="input" type="text" placeholder="Preço">
+                            <input class="input" type="text" placeholder="Formato: R$50 ou 500c">
                         </div>
                     </div>
                     <div class="field">
@@ -159,6 +159,27 @@ $(document).ready(function () {
                         </div>
                     </div>
                 `;
+                break;
+            case 'cursoInicial':
+                formHtml = `
+                        <div class="field">
+                            <label class="label has-text-white">Nome do Soldado</label>
+                            <div class="control">
+                                <input class="input" type="text" placeholder="Nome do Soldado">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label has-text-white">Observações</label>
+                            <div class="control">
+                                <textarea class="textarea" placeholder="Descreva observações sobre a aula"></textarea>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                <button class="button is-primary is-fullwidth" id="sendBtn">Enviar</button>
+                            </div>
+                        </div>
+                    `;
                 break;
             case 'avaliacao':
                 formHtml = `
@@ -193,12 +214,12 @@ $(document).ready(function () {
             const month = new Date().getMonth();
             const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
             const date = new Date(year, month, 1);
-            
+
             element.empty();
             days.forEach(day => {
                 element.append(`<div class="header has-text-white">${day}</div>`);
             });
-            
+
             while (date.getMonth() === month) {
                 element.append(`<div class="day has-text-white">${date.getDate()}</div>`);
                 date.setDate(date.getDate() + 1);
@@ -207,7 +228,7 @@ $(document).ready(function () {
 
         $('#sendBtn').on('click', function () {
             const dataToSend = [selectedType];
-            $('#requirementForm .control').each(function(index, element) {
+            $('#requirementForm .control').each(function (index, element) {
                 const inputElement = $($(element)[0].firstElementChild)
                 if (inputElement.hasClass('button')) return;
                 const inputValue = inputElement.val();
@@ -229,11 +250,7 @@ $(document).ready(function () {
                     }
                 },
                 error: function (data) {
-                    if (data.status === 400 ||
-                        data.status === 403 ||
-                        data.status === 404) {
-                            showError(data.responseJSON.error);
-                    }
+                    showError(data.responseJSON.error);
                 }
             });
 
@@ -246,7 +263,7 @@ $(document).ready(function () {
             function showError(message) {
                 if ($('.box .is-danger')) $('.box .is-danger').remove();
                 const errorMessage = $(`<p>${message}</p>`);
-                $('#requirementForm').after($('<div>').addClass('notification is-danger').css('margin-top', '20px').append(errorMessage));            
+                $('#requirementForm').after($('<div>').addClass('notification is-danger').css('margin-top', '20px').append(errorMessage));
             }
         });
     });

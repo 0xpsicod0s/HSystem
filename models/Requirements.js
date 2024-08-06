@@ -5,7 +5,7 @@ const RequirementSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['promocao', 'rebaixamento', 'advertencia', 'contrato', 'demissao', 'vendaDeCargo']
+        enum: ['promocao', 'rebaixamento', 'advertencia', 'contrato', 'demissao', 'vendaDeCargo', 'cursoInicial']
     },
     applicant: { type: mongoose.Schema.Types.ObjectId, ref: 'Register', required: true },
     nickname: { type: String, required: true },
@@ -23,12 +23,12 @@ export class Requirements {
 
     async sendRequirement() {
         try {
-            const [ requirementType, ...data ] = this.req.body;
+            const [requirementType, ...data] = this.req.body;
             if (!requirementType || !data) return this.res.status(400).json({ error: 'Dados invalidos' });
             const senderRequest = await RegisterModel.findById(this.req.userId).select('+role');
             if (!senderRequest) return this.res.status(400).json({ error: 'Oops! Algo deu errado!' });
             if (this.findRankLevel(senderRequest.role) === -1) return this.res.status(400).json({ error: 'Você não tem patente para isso' });
-    
+
             switch (requirementType) {
                 case 'promocao': return this.promotion(data, senderRequest);
                 case 'rebaixamento': return this.relegation(data, senderRequest);
@@ -36,9 +36,10 @@ export class Requirements {
                 case 'contrato': return this.contract(data, senderRequest);
                 case 'demissao': return this.resignation(data, senderRequest);
                 case 'vendaDeCargo': return this.saleOfPosition(data, senderRequest);
+                case 'cursoInicial': return this.initialCourse(data, senderRequest);
                 default: return;
             }
-        } catch(err) {
+        } catch (err) {
             return this.res.status(500).json({ error: 'Erro interno' });
         }
     }
@@ -90,13 +91,13 @@ export class Requirements {
             const promotedUser = await RegisterModel.findOne({ nickname: nicknameOfThePromoted }).select('+role');
             if (!promotedUser) return this.res.status(404).json({ error: 'Não foi possivel encontrar o militar promovido' });
             if (this.findRankLevel(promotedUser.role) + 1 !== promotedPatentLevel) return this.res.status(403).json({ error: 'Você deve promover o militar para a patente sucessora a dele' });
-    
+
             promotedUser.role = promotedPatent;
             await this.createRequirement('promocao', promoterUser, promotedUser.nickname, { promotedPatent, reasonForPromotion });
             await promotedUser.save();
             return this.res.status(200).json({ success: 'Promoção realizada com sucesso!' });
-    
-        } catch(err) {
+
+        } catch (err) {
             return this.res.status(500).json({ error: 'Oops! Ocorreu um erro interno ao aplicar a promoção, contate um desenvolvedor' });
         }
     }
@@ -122,7 +123,7 @@ export class Requirements {
             if (!demotedUser) return this.res.status(404).json({ error: 'Não foi possivel encontrar o militar rebaixado' });
             if (demotedUser.role !== currentPatent) return this.res.status(403).json({ error: 'Verifique a patente atual do militar rebaixado' });
             if (this.findRankLevel(demotedUser.role) - 1 !== newPatentLevel) return this.res.status(403).json({ error: 'Você deve rebaixar o militar para a patente antecessora a dele' });
-    
+
             demotedUser.role = newPatent;
             await this.createRequirement('rebaixamento', downgraderUser, demotedUser.nickname, { currentPatent, newPatent, reasonForDemotion });
             await demotedUser.save();
@@ -141,11 +142,11 @@ export class Requirements {
         try {
             const userWarned = await RegisterModel.findOne({ nickname: militaryNickname }).select('+role +warnings');
             if (!userWarned) return this.res.status(404).json({ error: 'Não foi possivel encontrar o militar advertido' });
-            
+
             const applicatorPatentLevel = this.findRankLevel(warningApplicator.role);
             const warnedRankLevel = this.findRankLevel(userWarned.role);
             if (applicatorPatentLevel - 1 <= warnedRankLevel) return this.res.status(403).json({ error: 'Você não tem nivel de patente suficiente para advertir este militar' });
-    
+
             userWarned.warnings++;
             await this.createRequirement('advertencia', warningApplicator, userWarned.nickname, { reasonForWarning });
             await userWarned.save();
@@ -172,11 +173,11 @@ export class Requirements {
             const militaryContracted = await RegisterModel.findOne({ nickname: militaryNickname }).select('+role');
             if (militaryContracted) {
                 if (contractedPatentLevel <= this.findRankLevel(militaryContracted.role)) return this.res.status(400).json({ error: 'Você não pode contratar um militar em uma patente inferior a dele atual' });
-                await this.createRequirement('contrato', contractor, militaryContracted.nickname, { oldPatent: militaryContracted.role, newPatent: militaryRanked, reasonForContract  });
+                await this.createRequirement('contrato', contractor, militaryContracted.nickname, { oldPatent: militaryContracted.role, newPatent: militaryRanked, reasonForContract });
                 militaryContracted.role = militaryRanked;
                 await militaryContracted.save();
                 return this.res.status(200).json({ success: 'Militar realocado com sucesso!' });
-            } 
+            }
             await RegisterModel.create({ nickname: militaryNickname, role: militaryRanked, email: `${militaryNickname}@email.com`, password: 'invalid' });
             await this.createRequirement('contrato', contractor, militaryRanked, { reasonForContract });
             return this.res.status(201).json({ success: 'Militar contratado com sucesso!' });
@@ -197,9 +198,9 @@ export class Requirements {
         const dismissorRankLevel = this.findRankLevel(dismisser.role);
         const dismissedRankLevel = this.findRankLevel(userFired.role);
         if (dismissorRankLevel - 1 <= dismissedRankLevel) return this.res.status(403).json({ error: 'Você não tem nivel de patente suficiente para demitir este militar' });
-        
+
         userFired.role = 'Civil';
-        userFired.state = 'Desativado';
+        userFired.state = 'Demitido';
         userFired.department = [];
         userFired.warnings = 0;
         await this.createRequirement('demissao', dismisser, userFired.nickname, { reasonForDismissal });
@@ -215,6 +216,9 @@ export class Requirements {
         if (!militaryNickname || !positionSold || !price) return this.res.status(400).json({ error: 'Preencha todos os campos' });
         if (!flattenedMilitaryHierarchy.includes(positionSold)) return this.res.status(403).json({ error: 'Cargo inexistente' });
 
+        const regex = /(R\$\d,\d|\dC)/i;
+        if (!regex.test(price)) return this.res.status(400).json({ error: 'O preço não condiz com o formato' });
+
         const directorRankLevel = this.findRankLevel('Diretor');
         const sellerRankLevel = this.findRankLevel(seller.role);
         const buyerRankLevel = this.findRankLevel(positionSold);
@@ -223,17 +227,50 @@ export class Requirements {
 
         try {
             const buyerUser = await RegisterModel.findOne({ nickname: militaryNickname }).select('+role');
-            if (buyerUser) {
-                await this.createRequirement('vendaDeCargo', seller, buyerUser.nickname, { positionSold, price });
-                buyerUser.role = positionSold;
-                await buyerUser.save();
-                return this.res.status(200).json({ success: 'Militar contratado com sucesso!' });
+            if (buyerUser === null) {
+                await RegisterModel.create({ 
+                    nickname: militaryNickname,
+                    role: positionSold,
+                    email: `${militaryNickname}@email.com`,
+                    password: 'invalid'
+                });
+                await this.createRequirement('vendaDeCargo', seller, militaryNickname, { positionSold, price });
+                return this.res.status(201).json({ success: 'Militar contratado com sucesso!' });
             }
-            await RegisterModel.create({ nickname: militaryNickname, role: positionSold, email: `${militaryNickname}@email.com`, password: 'invalid' });
             await this.createRequirement('vendaDeCargo', seller, buyerUser.nickname, { positionSold, price });
-            return this.res.status(201).json({ success: 'Militar contratado com sucesso!' });
-        } catch(err) {
+            buyerUser.role = positionSold;
+            await buyerUser.save();
+            return this.res.status(200).json({ success: 'Militar contratado com sucesso!' });
+        } catch (err) {
             return this.res.status(500).json({ error: 'Oops! Ocorreu um erro interno ao relizar essa venda, contate um desenvolvedor' });
         }
+    }
+
+    async initialCourse(data, instructor) {
+        const { inputValue: militaryNickname } = data[0];
+        const { inputValue: comments } = data[1];
+        if (!militaryNickname || !comments) return this.res.status(400).json({ error: 'Preencha todos os campos' });
+
+        const instructorRankLevel = this.findRankLevel(instructor.role);
+        const sergeantRankLevel = this.findRankLevel('Sargento');
+        if (instructorRankLevel <= sergeantRankLevel) return this.res.status(403).json({ error: 'Você não pode aplicar Curso Inicial' });
+
+        const userExists = await RegisterModel.findOne({ nickname: militaryNickname }).select('+role');
+        if (userExists && userExists.state === 'Ativo') return this.res.status(400).json({ error: 'Este militar ja faz parte da instituição' });
+        if (userExists && userExists.state === 'Desativado') {
+            userExists.role = 'Soldado';
+            await this.createRequirement('cursoInicial', instructor, userExists.nickname, { comments });
+            await userExists.save();
+            return this.res.status(200).json({ success: 'Curso Inicial postado com sucesso!' });
+        }
+
+        await RegisterModel.create({ 
+            nickname: militaryNickname,
+            role: 'Soldado',
+            email: `${militaryNickname}@email.com`,
+            password: 'invalid'
+        });
+        await this.createRequirement('cursoInicial', instructor, militaryNickname, { comments });
+        return this.res.status(200).json({ success: 'Curso Inicial postado com sucesso!' });
     }
 }

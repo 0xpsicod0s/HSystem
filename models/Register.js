@@ -66,9 +66,8 @@ export const RegisterModel = mongoose.model('Register', RegisterSchema);
 export class Register {
     constructor(body, res) {
         this.body = body;
-        this.error = false;
         this.res = res;
-        this.prefix = 'DOP-'
+        this.prefix = 'DOP-';
     }
 
     async verifyHabboMission(nickname, code) {
@@ -89,12 +88,13 @@ export class Register {
             if (!await this.userExists()) return;
 
             this.body.password = await bcrypt.hash(this.body.password, await bcrypt.genSalt());
-            const registrationData = {
-                nickname: this.body.nickname,
-                email: this.body.email,
-                password: this.body.password
-            }
-            await RegisterModel.create(registrationData);
+
+            const user = await RegisterModel.findOne({ nickname: this.body.nickname }).select('+password +email');
+            user.state = 'Ativo';
+            user.password = this.body.password;
+            user.email = this.body.email;
+            await user.save();
+
             return this.res.status(201).json({ success: 'Conta registrada com sucesso!' });
         } catch (err) {
             return this.res.status(500).json({ error: 'Erro interno' });
@@ -102,11 +102,26 @@ export class Register {
     }
 
     async userExists() {
-        const { nickname, email } = this.body;
-        const user = await RegisterModel.findOne({ $or: [{ nickname }, { email }] });
-        if (user) {
+        const { nickname } = this.body;
+        const user = await RegisterModel.findOne({ nickname });
+
+        if (!user) {
+            this.res.status(403).json({ error: 'Você não tem permissão para se registrar'});
+            return false;
+        }
+
+        if (user && user.state === 'Ativo') {
             this.res.status(400).json({ error: 'Usuario ja existente, tente novamente!' });
-            this.error = true;
+            return false;
+        }
+
+        if (user && user.state === 'Demitido') {
+            this.res.status(403).json({ error: 'Você foi demitido' });
+            return false;
+        }
+
+        if (user && user.state === 'Exonerado') {
+            this.res.status(403).json({ error: 'Você foi exonerado' });
             return false;
         }
         return true;
@@ -116,36 +131,30 @@ export class Register {
         this.cleanUp();
         if (!this.body.nickname || !this.body.email || !this.body.password) {
             this.res.status(400).json({ error: 'Preencha todos os campos' });
-            this.error = true;
             return false;
         }
         if (!this.body.code) {
             this.res.status(400).json({ error: 'Código de missão obrigatório' });
-            this.error = true;
             return false;
         }
         if (!validator.isEmail(this.body.email)) {
             this.res.status(400).json({ error: 'Email invalido' });
-            this.error = true;
             return false;
         }
         if (this.body.password.length < 8) {
             this.res.status(400).json({ error: 'A senha precisa ter mais que 8 caracteres' });
-            this.error = true;
             return false;
         }
 
         const isCodeValid = this.body.code.startsWith(this.prefix);
         if (!isCodeValid) {
             this.res.status(400).json({ error: 'Código inválido' });
-            this.error = true;
             return false;
         }
 
         const isMissionCorrect = await this.verifyHabboMission(this.body.nickname, this.body.code);
         if (!isMissionCorrect) {
             this.res.status(400).json({ error: 'Código de missão incorreto' });
-            this.error = true;
             return false;
         }
         return true;
