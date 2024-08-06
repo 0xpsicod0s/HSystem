@@ -18,7 +18,7 @@ export default {
             const searchCondition = search.trim() ? { nickname: { $regex: new RegExp(search.trim(), 'i') } } : {};
             const users = await RegisterModel.find(
                 searchCondition,
-                { _id: 1, nickname: 1, email: 1, role: 1 }
+                { _id: 1, nickname: 1, email: 1, role: 1, state: 1 }
             )
             .limit(limit * 1)
             .skip((page - 1) * limit);

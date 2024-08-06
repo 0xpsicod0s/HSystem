@@ -15,12 +15,15 @@ $(document).ready(function () {
 
                 $('#user-list').empty();
                 users.forEach((user, index) => {
+                    console.log(user);
+                    
                     $('#user-list').append(`
                         <tr>
                             <td data-label="ID">${index + 1 + (page - 1) * limit}</td>
                             <td data-label="Nick">${user.nickname}</td>
                             <td data-label="Email">${user.email}</td>
                             <td data-label="Patente">${user.role}</td>
+                            <td data-label="Status">${user.state}</td>
                             <td data-label="Ações">
                                 <button class="button is-small is-info edit-button" data-id="${user._id}">Editar</button>
                                 <button class="button is-small is-danger delete-button" data-id="${user._id}">Excluir</button>
