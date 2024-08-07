@@ -7,13 +7,14 @@ $(document).ready(function () {
             withCredentials: true
         },
         success: function (data) {
+            if (!data.length) showError('Nenhuma aula registrada no momento');
             data.forEach(({ data: classInformation, classInstructor }) => {
                 $('#classListBody').append(`
                     <tr>
-                        <td>${classInstructor.nickname}</td>
-                        <td>${classInformation.militaryNickname}</td>
-                        <td>${classInformation.typeOfClass}</td>
-                        <td>Pendente</td>
+                        <td data-label="Instrutor">${classInstructor.nickname}</td>
+                        <td data-label="Aluno">${classInformation.militaryNickname}</td>
+                        <td data-label="Aula">${classInformation.typeOfClass}</td>
+                        <td data-label="Status">Pendente</td>
                     </tr>
                 `);
             });

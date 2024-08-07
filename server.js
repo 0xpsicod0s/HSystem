@@ -19,7 +19,7 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://code.jquery.com", "'sha256-Y6FrPCmIbjgztml2f0cRZeXG7PVuq5uPxuIuJ7XBhvY='"],
+            scriptSrc: ["'self'", "https://cdn.jsdelivr.net", "https://code.jquery.com", "'sha256-hicaDpG/oBO5QMFpUBv/tbDg6C4kG74iU8mEP2+HH5o='"],
             imgSrc: ["'self'", "data:", "https://www.habbo.com.br"]
         },
     }

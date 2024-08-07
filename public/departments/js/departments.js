@@ -23,6 +23,7 @@ $(document).ready(function () {
                         </div>
                     </div>
                 `;
+                loadDocuments();
                 break;
 
             case 'postagem_de_aula':
@@ -55,6 +56,7 @@ $(document).ready(function () {
                         </div>
                     </div>
                 `;
+                classPost(selectedOption);
                 break;
 
             case 'aulas':
@@ -62,10 +64,75 @@ $(document).ready(function () {
                     <div class="field">
                         <label class="label has-text-white">Aulas</label>
                         <div id="lessonsList" class="content has-text-white">
-                            <!-- Aulas serão carregadas aqui -->
                         </div>
                     </div>
                 `;
+                loadLessons();
+                break;
+
+            case 'requerimentos':
+                contentHtml = `
+                    <div class="field">
+                        <label class="label has-text-white">Selecione uma categoria de requerimento</label>
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select id="requirementOptions">
+                                    <option value="" disabled selected>Selecione uma opção</option>
+                                    <option value="contrato">Contratos</option>
+                                    <option value="promocao">Promoções</option>
+                                    <option value="rebaixamento">Rebaixamentos</option>
+                                    <option value="advertencia">Advertências</option>
+                                    <option value="demissao">Demissões</option>
+                                    <option value="vendaDeCargo">Venda de Cargo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="requirementContent"></div>
+                `;
+
+                $('#departmentContent').html(contentHtml);
+                setTimeout(() => {
+                    $('#requirementOptions').off('change').on('change', function () {
+                        if ($('.is-danger')) $('.is-danger').remove();
+                        const selectedRequirement = $(this).val();
+                        let tableHeaders = '';
+                        switch (selectedRequirement) {
+                            case 'contrato':
+                                tableHeaders = '<th>Contratante</th><th>Contratado</th><th>Data</th><th>Status</th><th>Ações</th>';
+                                break;
+                            case 'promocao':
+                                tableHeaders = '<th>Promotor</th><th>Promovido</th><th>Data</th><th>Status</th><th>Ações</th>';
+                                break;
+                            case 'rebaixamento':
+                                tableHeaders = '<th>Rebaixador</th><th>Rebaixado</th><th>Data</th><th>Status</th><th>Ações</th>';
+                                break;
+                            case 'advertencia':
+                                tableHeaders = '<th>Advertente</th><th>Advertido</th><th>Data</th><th>Status</th><th>Ações</th>';
+                                break;
+                            case 'demissao':
+                                tableHeaders = '<th>Demissor</th><th>Demitido</th><th>Data</th><th>Status</th><th>Ações</th>';
+                                break;
+                            case 'vendaDeCargo':
+                                tableHeaders = '<th>Vendedor</th><th>Comprador</th><th>Data</th><th>Status</th><th>Ações</th>';
+                                break;
+                        }
+    
+                        $('#requirementContent').html(`
+                                <table class="table is-fullwidth is-striped">
+                                    <thead>
+                                        <tr>
+                                            ${tableHeaders}
+                                        </tr>
+                                    </thead>
+                                    <tbody id="requirementListBody">
+                                    </tbody>
+                                </table>
+                            `);
+    
+                        showRequirements(selectedRequirement);
+                    });
+                }, 0);
                 break;
 
             case 'membros':
@@ -88,6 +155,7 @@ $(document).ready(function () {
                         </div>
                     </div>
                 `;
+                loadMembers();
                 break;
 
             default:
@@ -95,11 +163,6 @@ $(document).ready(function () {
         }
 
         $('#departmentContent').html(contentHtml);
-
-        if (selectedOption === 'documentos') loadDocuments();
-        if (selectedOption === 'postagem_de_aula') classPost(selectedOption);
-        if (selectedOption === 'membros') loadMembers();
-        if (selectedOption === 'aulas') loadLessons();
     });
 
     function loadDocuments() {
@@ -122,7 +185,7 @@ $(document).ready(function () {
                 $('#documentsList').html(documentsHtml);
 
                 $('.button').each(function (index, element) {
-                    $(element).on('click', function() {
+                    $(element).on('click', function () {
                         const documentName = $(element.previousElementSibling).text();
                         const { data: findDocument } = data.find(({ data }) => data.title === documentName);
                         if (!findDocument) showError('Documento nao encontrado');
@@ -212,7 +275,7 @@ $(document).ready(function () {
                 $('#lessonsList').html(classHtml);
 
                 $('.button').each(function (index, element) {
-                    $(element).on('click', function() {
+                    $(element).on('click', function () {
                         const className = $(element.previousElementSibling).text();
                         const { data: findClass } = data.find(({ data }) => data.name === className);
                         if (!findClass) showError('Aula nao encontrada');
@@ -271,6 +334,61 @@ $(document).ready(function () {
         });
     }
 
+    function showRequirements(selectedRequirement) {
+        $.ajax({
+            method: 'GET',
+            url: `/api/requirements?type=${selectedRequirement}`,
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data) {
+                $('#requirementListBody').empty();
+                data.forEach(requirement => {
+                    const formattedDate = new Date(requirement.date).toLocaleDateString('pt-BR');
+                    $('#requirementListBody').append(`
+                                <tr>
+                                    <td>${requirement.applicant}</td>
+                                    <td>${requirement.nickname}</td>
+                                    <td data-label="Data">${formattedDate}</td>
+                                    <td data-label="Status">${requirement.state}</td>
+                                    <td data-label="Ações">
+                                        <button class="button is-small is-info approve-button" data-id="${requirement._id}">Aprovar</button>
+                                        <button class="button is-small is-danger reject-button" data-id="${requirement._id}">Reprovar</button>
+                                    </td>
+                                </tr>                            
+                            `);
+                });
+                $(document).off('click', '.approve-button');
+                $(document).off('click', '.reject-button');
+                $(document).on('click', '.approve-button', () => actionRequest.call($('.approve-button'), 'Aprovado'));
+                $(document).on('click', '.reject-button', () => actionRequest.call($('.reject-button'), 'Reprovado'));
+
+                function actionRequest(action) {
+                    const requirementId = $(this).data('id');
+                    $.ajax({
+                        method: 'GET',
+                        url: `/api/changeRequirementStatus/${requirementId}?action=${action}`,
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        success: function (data) {
+                            successfulOperation(data.success);
+                            showRequirements(selectedRequirement);
+                            setTimeout(() => $('.box > .is-success').remove(), 3000);
+                        },
+                        error: function (err) {
+                            showError(err.responseJSON.error);
+                            setTimeout(() => $('.box > .is-danger').remove(), 3000);
+                        }
+                    });
+                }
+            },
+            error: function (err) {
+                showError(err.responseJSON.error);
+            }
+        });
+    }
+
     function appendMemberHtml(selector, memberName) {
         const memberHtml = `
             <div class="box is-multiline">
@@ -282,13 +400,13 @@ $(document).ready(function () {
     }
 
     function successfulOperation(message) {
-        if ($('.box .is-danger')) $('.box .is-danger').remove();
+        if ($('.box > .is-danger')) $('.box > .is-danger').remove();
         const successMessage = $(`<p>${message}</p>`);
         $('#departmentContent').after($('<div>').addClass('notification is-success').css('margin-top', '20px').append(successMessage));
     }
 
     function showError(message) {
-        if ($('.box .is-danger')) $('.box .is-danger').remove();
+        if ($('.box > .is-danger')) $('.box > .is-danger').remove();
         const errorMessage = $(`<p>${message}</p>`);
         $('#departmentContent').after($('<div>').addClass('notification is-danger').css('margin-top', '20px').append(errorMessage));
     }

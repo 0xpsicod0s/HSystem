@@ -45,7 +45,6 @@ export const isLeader = async (req, res) => {
 
         const findUser = await RegisterModel.findOne({ _id: req.userId });
         if (!findUser) return res.status(403).json({ error: 'Você não tem permissão de acesso aqui' });
-        console.log(findUser);
 
         const findDepartment = await DepartmentModel.findOne({
             name: currentDepartment,

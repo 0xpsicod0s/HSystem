@@ -7,8 +7,9 @@ const RequirementSchema = new mongoose.Schema({
         required: true,
         enum: ['promocao', 'rebaixamento', 'advertencia', 'contrato', 'demissao', 'vendaDeCargo', 'cursoInicial']
     },
-    applicant: { type: mongoose.Schema.Types.ObjectId, ref: 'Register', required: true },
+    applicant: { type: String, required: true },
     nickname: { type: String, required: true },
+    state: { type: String, required: true, default: 'Pendente' },
     date: { type: Date, default: Date.now },
     details: { type: mongoose.Schema.Types.Mixed, required: true }
 });
@@ -59,6 +60,20 @@ export class Requirements {
         return -1;
     }
 
+    async listRequirements() {
+        const { type } = this.req.query;
+        if (!type) return this.res.status(400).json({ error: 'Query não informada' });
+
+        try {
+            const requirements = await RequirementModel.find({ type });
+            if (!requirements.length) return this.res.status(404).json({ error: 'Nenhum requerimento desse tipo disponível' });
+
+            return this.res.status(200).json(requirements);
+        } catch(err) {
+            return this.res.status(500).json({ error: 'Oops! Ocorreu um erro interno ao listar os requerimentos. Contate um desenvolvedor' });
+        }
+    }
+
     async createRequirement(type, applicant, nickname, details) {
         if (!type || !applicant || !nickname || !details) {
             throw new Error('Todos os campos são obrigatórios');
@@ -72,6 +87,24 @@ export class Requirements {
         });
         await newRequirement.save();
         return newRequirement;
+    }
+
+    async changeRequirementStatus() {
+        const { requirementId } = this.req.params;
+        if (!requirementId) return this.res.status(400).json({ error: 'ID de requerimento não especificado' });
+
+        const { action } = this.req.query;
+        if (!action) return this.res.status(400).json({ error: 'Ação não especificada' });
+        if (action !== 'Reprovado' && action !== 'Aprovado') return this.res.status(400).json({ error: 'Ação não permitida. Tente novamente' });
+
+        try {
+            const requirement = await RequirementModel.updateOne({ _id: requirementId }, { $set: { state: action } });
+            if (!requirement.matchedCount) return this.res.status(404).json({ error: 'Não foi possível encontrar o requerimento desejado' });
+            if (!requirement.modifiedCount) return this.res.status(400).json({ error: 'Nenhuma modificação foi feita no requerimento' });
+            return this.res.status(200).json({ success: `Requerimento ${action.toLowerCase()} com sucesso!`});
+        } catch (err) {            
+            return this.res.status(500).json({ error: 'Oops! Ocorreu um erro interno ao realizar esta ação. Contate um desenvolvedor' });
+        }
     }
 
     async promotion(data, promoterUser) {
@@ -93,7 +126,7 @@ export class Requirements {
             if (this.findRankLevel(promotedUser.role) + 1 !== promotedPatentLevel) return this.res.status(403).json({ error: 'Você deve promover o militar para a patente sucessora a dele' });
 
             promotedUser.role = promotedPatent;
-            await this.createRequirement('promocao', promoterUser, promotedUser.nickname, { promotedPatent, reasonForPromotion });
+            await this.createRequirement('promocao', promoterUser.nickname, promotedUser.nickname, { promotedPatent, reasonForPromotion });
             await promotedUser.save();
             return this.res.status(200).json({ success: 'Promoção realizada com sucesso!' });
 
@@ -125,7 +158,7 @@ export class Requirements {
             if (this.findRankLevel(demotedUser.role) - 1 !== newPatentLevel) return this.res.status(403).json({ error: 'Você deve rebaixar o militar para a patente antecessora a dele' });
 
             demotedUser.role = newPatent;
-            await this.createRequirement('rebaixamento', downgraderUser, demotedUser.nickname, { currentPatent, newPatent, reasonForDemotion });
+            await this.createRequirement('rebaixamento', downgraderUser.nickname, demotedUser.nickname, { currentPatent, newPatent, reasonForDemotion });
             await demotedUser.save();
             return this.res.status(200).json({ success: 'Rebaixamento realizado com sucesso!' });
         } catch (err) {
@@ -148,7 +181,7 @@ export class Requirements {
             if (applicatorPatentLevel - 1 <= warnedRankLevel) return this.res.status(403).json({ error: 'Você não tem nivel de patente suficiente para advertir este militar' });
 
             userWarned.warnings++;
-            await this.createRequirement('advertencia', warningApplicator, userWarned.nickname, { reasonForWarning });
+            await this.createRequirement('advertencia', warningApplicator.nickname, userWarned.nickname, { reasonForWarning });
             await userWarned.save();
             return this.res.status(200).json({ success: 'Militar advertido com sucesso!' });
         } catch (err) {
@@ -173,13 +206,13 @@ export class Requirements {
             const militaryContracted = await RegisterModel.findOne({ nickname: militaryNickname }).select('+role');
             if (militaryContracted) {
                 if (contractedPatentLevel <= this.findRankLevel(militaryContracted.role)) return this.res.status(400).json({ error: 'Você não pode contratar um militar em uma patente inferior a dele atual' });
-                await this.createRequirement('contrato', contractor, militaryContracted.nickname, { oldPatent: militaryContracted.role, newPatent: militaryRanked, reasonForContract });
+                await this.createRequirement('contrato', contractor.nickname, militaryContracted.nickname, { oldPatent: militaryContracted.role, newPatent: militaryRanked, reasonForContract });
                 militaryContracted.role = militaryRanked;
                 await militaryContracted.save();
                 return this.res.status(200).json({ success: 'Militar realocado com sucesso!' });
             }
             await RegisterModel.create({ nickname: militaryNickname, role: militaryRanked, email: `${militaryNickname}@email.com`, password: 'invalid' });
-            await this.createRequirement('contrato', contractor, militaryRanked, { reasonForContract });
+            await this.createRequirement('contrato', contractor.nickname, militaryRanked, { reasonForContract });
             return this.res.status(201).json({ success: 'Militar contratado com sucesso!' });
         } catch (err) {
             return this.res.status(500).json({ error: 'Oops! Ocorreu um erro interno ao aplicar o contrato, contate um desenvolvedor' });
@@ -203,7 +236,7 @@ export class Requirements {
         userFired.state = 'Demitido';
         userFired.department = [];
         userFired.warnings = 0;
-        await this.createRequirement('demissao', dismisser, userFired.nickname, { reasonForDismissal });
+        await this.createRequirement('demissao', dismisser.nickname, userFired.nickname, { reasonForDismissal });
         await userFired.save();
         return this.res.status(200).json({ success: 'Militar demitido com sucesso!' });
     }
@@ -234,10 +267,10 @@ export class Requirements {
                     email: `${militaryNickname}@email.com`,
                     password: 'invalid'
                 });
-                await this.createRequirement('vendaDeCargo', seller, militaryNickname, { positionSold, price });
+                await this.createRequirement('vendaDeCargo', seller.nickname, militaryNickname, { positionSold, price });
                 return this.res.status(201).json({ success: 'Militar contratado com sucesso!' });
             }
-            await this.createRequirement('vendaDeCargo', seller, buyerUser.nickname, { positionSold, price });
+            await this.createRequirement('vendaDeCargo', seller.nickname, buyerUser.nickname, { positionSold, price });
             buyerUser.role = positionSold;
             await buyerUser.save();
             return this.res.status(200).json({ success: 'Militar contratado com sucesso!' });
@@ -259,7 +292,7 @@ export class Requirements {
         if (userExists && userExists.state === 'Ativo') return this.res.status(400).json({ error: 'Este militar ja faz parte da instituição' });
         if (userExists && userExists.state === 'Desativado') {
             userExists.role = 'Soldado';
-            await this.createRequirement('cursoInicial', instructor, userExists.nickname, { comments });
+            await this.createRequirement('cursoInicial', instructor.nickname, userExists.nickname, { comments });
             await userExists.save();
             return this.res.status(200).json({ success: 'Curso Inicial postado com sucesso!' });
         }
@@ -270,7 +303,7 @@ export class Requirements {
             email: `${militaryNickname}@email.com`,
             password: 'invalid'
         });
-        await this.createRequirement('cursoInicial', instructor, militaryNickname, { comments });
+        await this.createRequirement('cursoInicial', instructor.nickname, militaryNickname, { comments });
         return this.res.status(200).json({ success: 'Curso Inicial postado com sucesso!' });
     }
 }

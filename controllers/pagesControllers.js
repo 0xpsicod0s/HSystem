@@ -31,6 +31,9 @@ export const validateSearchUser = [
     }
 ];
 
+export const changeRequirementStatus = async (req, res) => new Requirements(req, res).changeRequirementStatus();
+
+export const listRequirements = async (req, res) => new Requirements(req, res).listRequirements();
 export const requirements = async (req, res) => new Requirements(req, res).sendRequirement();
 
 export const getMilitaries = async (req, res) => {

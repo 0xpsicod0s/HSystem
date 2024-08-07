@@ -2,7 +2,7 @@ import express from 'express';
 import { register, login, logout, authenticate } from '../controllers/authController.js';
 import { isAuthenticated, roleMiddleware, departmentMiddleware } from '../middlewares/auth.js';
 import { departmentParticipant, departmentsRequirements, getDocumentsDepartment, getMembers, getClasses, editMember, removeMember, getClassPosting, getDepartment, isLeader } from '../controllers/departmentsController.js';
-import { searchUser, validateSearchUser, getMilitaries, requirements, showDocument, showPublication, getPublications, getDocuments } from '../controllers/pagesControllers.js';
+import { searchUser, validateSearchUser, getMilitaries, changeRequirementStatus, listRequirements, requirements, showDocument, showPublication, getPublications, getDocuments } from '../controllers/pagesControllers.js';
 import panelController from '../controllers/panelController.js';
 import { middlewareIsAdmin } from '../middlewares/panelMiddleware.js';
 import { getLogs } from '../controllers/logController.js';
@@ -31,6 +31,8 @@ router.get('/doc/:link', isAuthenticated, showDocument);
 router.get('/pub/:link', isAuthenticated, showPublication);
 router.get('/getPublications', isAuthenticated, getPublications);
 router.get('/getDocuments', isAuthenticated, getDocuments);
+router.get('/changeRequirementStatus/:requirementId', isAuthenticated, changeRequirementStatus);
+router.get('/requirements', isAuthenticated, listRequirements);
 router.post('/requirements', isAuthenticated, requirements);
 
 
