@@ -3,7 +3,6 @@ import Login from '../models/Login.js';
 import { saveLog } from '../controllers/logController.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import axios from 'axios';
 
 export const register = async (req, res) => {
     const register = new Register(req.body, res);
@@ -18,15 +17,16 @@ export const login = async (req, res) => {
 
     try {
         const { nickname, password } = login.body;
-        const dataToSend = { nickname, password };
-        const csrfToken = req.csrfToken();
-        const response = await axios.post('https://dopsystem-production.up.railway.app/api/authenticate', dataToSend, {
-            headers: {
-                'CSRF-Token': csrfToken
-            }
+        const user = await RegisterModel.findOne({ nickname }).select('+password');
+
+        if (!user) return res.status(400).json({ error: 'Usuario nao encontrado' });
+        if (!await bcrypt.compare(password, user.password)) return res.status(400).json({ error: 'Senha invalida' });
+
+        user.password = undefined;
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+            expiresIn: 86400
         });
-        const token = response.data.token;
-        
+
         res.cookie('token', token, { httpOnly: true, path: '/' });
         await saveLog(nickname, 'LOGIN', 'Usuário logado com sucesso', req);
         return res.status(200).json({ success: 'Login efetuado com sucesso!' });
@@ -54,19 +54,4 @@ export const logout = async (req, res) => {
     restrictedTokens.push(req.formattedToken);
     res.clearCookie('token', { path: '/' });
     return res.status(200).json({ success: 'Deslogado com sucesso!' });
-}
-
-export const authenticate = async (req, res) => {
-    const { nickname, password } = req.body;
-    const user = await RegisterModel.findOne({ nickname }).select('+password');
-
-    if (!user) return res.status(400).json({ error: 'Usuario nao encontrado' });
-    if (!await bcrypt.compare(password, user.password)) return res.status(400).json({ error: 'Senha invalida' });
-
-    user.password = undefined;
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: 86400
-    });
-
-    res.json({ user, token });
 }

@@ -30,9 +30,7 @@ app.use(helmet({
     }
 }));
 app.use((req, _, next) => {
-    console.log(req.headers);
-    console.log('---------');
-    console.log(req.cookies);
+    console.log(req.headers['csrf-token']);
     next();
 })
 app.use(csrfProtection, (req, res, next) => {

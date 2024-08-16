@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, logout, authenticate } from '../controllers/authController.js';
+import { register, login, logout } from '../controllers/authController.js';
 import { isAuthenticated, roleMiddleware, departmentMiddleware } from '../middlewares/auth.js';
 import { departmentParticipant, departmentsRequirements, getDocumentsDepartment, getMembers, getClasses, editMember, removeMember, getClassPosting, getDepartment, isLeader } from '../controllers/departmentsController.js';
 import { searchUser, validateSearchUser, getMilitaries, changeRequirementStatus, listRequirements, requirements, showDocument, showPublication, getPublications, getDocuments } from '../controllers/pagesControllers.js';
@@ -15,7 +15,6 @@ const router = express.Router();
 router.post('/auth/register', register);
 router.post('/auth/login', login);
 router.get('/auth/logout', isAuthenticated, logout);
-router.post('/authenticate', authenticate);
 
 // Rotas do perfil
 router.get('/user/profile', isAuthenticated, profile);
