@@ -29,6 +29,12 @@ app.use(helmet({
         },
     }
 }));
+app.use((req, _, next) => {
+    console.log(req.headers);
+    console.log('---------');
+    console.log(req.cookies);
+    next();
+})
 app.use(csrfProtection, (req, res, next) => {
     res.cookie('XSRFTOKEN', req.csrfToken());
     next();
