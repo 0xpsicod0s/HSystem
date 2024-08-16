@@ -1,8 +1,12 @@
+const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRFTOKEN=')).split('=')[1];
 $.ajax({
     method: 'GET',
     url: `/api/departmentParticipant`,
     xhrFields: {
         withCredentials: true
+    },
+    headers: {
+        'CSRF-Token': csrfToken
     },
     success: function (data) {
         if (!data.length) return;

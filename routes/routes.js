@@ -31,8 +31,8 @@ router.get('/doc/:link', isAuthenticated, showDocument);
 router.get('/pub/:link', isAuthenticated, showPublication);
 router.get('/getPublications', isAuthenticated, getPublications);
 router.get('/getDocuments', isAuthenticated, getDocuments);
-router.get('/changeRequirementStatus/:requirementId', isAuthenticated, changeRequirementStatus);
-router.get('/requirements', isAuthenticated, listRequirements);
+router.get('/changeRequirementStatus/:requirementId', isAuthenticated, departmentMiddleware(['Recursos Humanos']), changeRequirementStatus);
+router.get('/requirements', isAuthenticated, departmentMiddleware(['Recursos Humanos']), listRequirements);
 router.post('/requirements', isAuthenticated, requirements);
 
 

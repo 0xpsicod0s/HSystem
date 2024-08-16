@@ -10,6 +10,12 @@ $(document).ready(function () {
         ],
         language: 'pt_BR'
     });
+    const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRFTOKEN=')).split('=')[1];
+    $.ajaxSetup({
+        headers: {
+            'CSRF-Token': csrfToken
+        }
+    });
 
     $('#saveDocument').on('click', function () {
         const dataToSend = ['salva_documento'];

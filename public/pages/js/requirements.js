@@ -150,7 +150,7 @@ $(document).ready(function () {
                     <div class="field">
                         <label class="label has-text-white">Preço</label>
                         <div class="control">
-                            <input class="input" type="text" placeholder="Formato: R$50 ou 500c">
+                            <input class="input" type="text" placeholder="Formato: R$50,00 ou 500c">
                         </div>
                     </div>
                     <div class="field">
@@ -228,18 +228,21 @@ $(document).ready(function () {
 
         $('#sendBtn').on('click', function () {
             const dataToSend = [selectedType];
-            $('#requirementForm .control').each(function (index, element) {
+            const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRFTOKEN=')).split('=')[1];
+            $('#requirementForm .control').each(function (_, element) {
                 const inputElement = $($(element)[0].firstElementChild)
                 if (inputElement.hasClass('button')) return;
                 const inputValue = inputElement.val();
                 dataToSend.push({ inputValue });
             });
-
             $.ajax({
                 method: 'POST',
                 url: '/api/requirements',
                 xhrFields: {
                     withCredentials: true
+                },
+                headers: {
+                    'CSRF-Token': csrfToken
                 },
                 data: JSON.stringify(dataToSend),
                 contentType: 'application/json; charset=utf-8',

@@ -1,6 +1,12 @@
 $(document).ready(function() {
     const urlParams = new URLSearchParams(window.location.search);
     const link = urlParams.get('link');
+    const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRFTOKEN=')).split('=')[1];
+    $.ajaxSetup({
+        headers: {
+            'CSRF-Token': csrfToken
+        }
+    });
     
     if (link) {
         $.ajax({

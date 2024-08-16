@@ -23,8 +23,7 @@ export const militaryHierarchy = [
     'Diretor-Geral',
     'Supremo',
     'Regente',
-    'Dono',
-    'Admin'
+    'Dono'
 ];
 
 export const departments = [

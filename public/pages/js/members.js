@@ -1,5 +1,6 @@
 $(document).ready(function () {
     $('#bodyOptions').on('change', function() {
+        const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRFTOKEN=')).split('=')[1];
         const selectedOption = $(this).val();
         if (!selectedOption) return;
 
@@ -8,6 +9,9 @@ $(document).ready(function () {
             url: `/api/members?body=${selectedOption}`,
             xhrFields: {
                 withCredentials: true
+            },
+            headers: {
+                'CSRF-Token': csrfToken
             },
             success: function (data) {
                 $('#bodyContent').empty();

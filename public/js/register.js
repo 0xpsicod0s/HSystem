@@ -13,10 +13,12 @@ function validateForm() {
 
 async function registerUser(data) {
     try {
+        const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRFTOKEN=')).split('=')[1];
         const response = await fetch("/api/auth/register", {
             method: "POST",
             headers: {
-                'Content-Type': 'application/json; charset=utf-8'
+                'Content-Type': 'application/json; charset=utf-8',
+                'CSRF-Token': csrfToken
             },
             body: JSON.stringify(data)
         });

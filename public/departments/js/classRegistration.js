@@ -1,5 +1,11 @@
 $(document).ready(function () {
     const departmentName = $('input[type="hidden"]').val();
+    const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRFTOKEN=')).split('=')[1];
+    $.ajaxSetup({
+        headers: {
+            'CSRF-Token': csrfToken
+        }
+    });
     $.ajax({
         method: 'GET',
         url: `/api/departments/getClassPosting?departmentName=${departmentName}`,

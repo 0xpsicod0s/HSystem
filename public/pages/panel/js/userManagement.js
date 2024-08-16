@@ -1,6 +1,12 @@
 $(document).ready(function () {
     let currentPage = 1;
     const limit = 10;
+    const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRFTOKEN=')).split('=')[1];
+    $.ajaxSetup({
+        headers: {
+            'CSRF-Token': csrfToken
+        }
+    });
 
     const fetchUsers = (page, searchTerm = '') => {
         $.ajax({
@@ -14,9 +20,7 @@ $(document).ready(function () {
                 const totalPages = response.totalPages;
 
                 $('#user-list').empty();
-                users.forEach((user, index) => {
-                    console.log(user);
-                    
+                users.forEach((user, index) => {                    
                     $('#user-list').append(`
                         <tr>
                             <td data-label="ID">${index + 1 + (page - 1) * limit}</td>

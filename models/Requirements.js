@@ -5,7 +5,15 @@ const RequirementSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['promocao', 'rebaixamento', 'advertencia', 'contrato', 'demissao', 'vendaDeCargo', 'cursoInicial']
+        enum: [
+            'promocao',
+            'rebaixamento',
+            'advertencia',
+            'contrato',
+            'demissao',
+            'vendaDeCargo',
+            'cursoInicial'
+        ]
     },
     applicant: { type: String, required: true },
     nickname: { type: String, required: true },
@@ -102,7 +110,7 @@ export class Requirements {
             if (!requirement.matchedCount) return this.res.status(404).json({ error: 'Não foi possível encontrar o requerimento desejado' });
             if (!requirement.modifiedCount) return this.res.status(400).json({ error: 'Nenhuma modificação foi feita no requerimento' });
             return this.res.status(200).json({ success: `Requerimento ${action.toLowerCase()} com sucesso!`});
-        } catch (err) {            
+        } catch (err) {
             return this.res.status(500).json({ error: 'Oops! Ocorreu um erro interno ao realizar esta ação. Contate um desenvolvedor' });
         }
     }

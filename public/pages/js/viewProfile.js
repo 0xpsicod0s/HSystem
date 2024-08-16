@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRFTOKEN=')).split('=')[1];
     const urlParams = new URLSearchParams(window.location.search);
     const nickname = urlParams.get('nick');
     if (nickname) {
@@ -7,6 +8,9 @@ $(document).ready(function() {
             url: `/api/user/${nickname}`,
             xhrFields: {
                 withCredentials: true
+            },
+            headers: {
+                'CSRF-Token': csrfToken
             },
             success: function(data) {
                 $('.image').append(`<img src="https://www.habbo.com.br/habbo-imaging/avatarimage?&user=${data.user.nickname}&action=std&direction=2&head_direction=2&img_format=png&gesture=sml&frame=1&headonly=0&size=m" alt="Avatar" style="max-width: 100%; height: auto;">`);

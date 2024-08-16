@@ -1,4 +1,10 @@
 $(document).ready(function () {
+    const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRFTOKEN=')).split('=')[1];
+    $.ajaxSetup({
+        headers: {
+            'CSRF-Token': csrfToken
+        }
+    });
     const fetchDocuments = () => {
         $.ajax({
             method: 'GET',

@@ -1,9 +1,13 @@
 $(document).ready(function () {
+    const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRFTOKEN=')).split('=')[1];
     $.ajaxSetup({
         method: 'POST',
         url: '/api/departments/requirements',
         xhrFields: {
             withCredentials: true
+        },
+        headers: {
+            'CSRF-Token': csrfToken
         },
         contentType: 'application/json; charset=utf-8'
     });
