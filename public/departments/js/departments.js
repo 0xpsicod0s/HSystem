@@ -60,7 +60,7 @@ $(document).ready(function () {
                         </div>
                     </div>
                 `;
-                classPost(selectedOption);
+                setTimeout(() => classPost(selectedOption), 0);
                 break;
 
             case 'aulas':
@@ -364,8 +364,12 @@ $(document).ready(function () {
                 });
                 $(document).off('click', '.approve-button');
                 $(document).off('click', '.reject-button');
-                $(document).on('click', '.approve-button', () => actionRequest.call($('.approve-button'), 'Aprovado'));
-                $(document).on('click', '.reject-button', () => actionRequest.call($('.reject-button'), 'Reprovado'));
+                $(document).on('click', '.approve-button', function() {
+                    actionRequest.call(this, 'Aprovado');
+                });
+                $(document).on('click', '.reject-button', function() {
+                    actionRequest.call(this, 'Reprovado');
+                });
 
                 function actionRequest(action) {
                     const requirementId = $(this).data('id');
