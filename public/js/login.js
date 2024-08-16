@@ -51,7 +51,6 @@ async function loginUser(data) {
 
 const form = $('form');
 form.on('submit', function (event) {
-    console.log('aaa');
     event.preventDefault();
     $('.help').remove();
 
