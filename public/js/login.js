@@ -51,9 +51,9 @@ async function loginUser(data) {
 
 const form = $('form');
 form.on('submit', function (event) {
+    console.log('aaa');
     event.preventDefault();
     $('.help').remove();
-
 
     if (!validateForm()) {
         const error = $('<p class="help is-danger">Preencha todos os campos!</p>');
