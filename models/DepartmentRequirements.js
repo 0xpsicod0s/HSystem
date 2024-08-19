@@ -6,8 +6,7 @@ import sanitize from 'sanitize-html';
 
 const RequirementSchema = new mongoose.Schema({
     department: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Departments',
+        type: String,
         required: true
     },
     type: {
@@ -33,8 +32,7 @@ const RequirementSchema = new mongoose.Schema({
         default: Date.now
     },
     createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Register',
+        type: String,
         required: true
     }
 });
@@ -117,7 +115,7 @@ export class DepartmentRequirement {
             const findDepartment = teacher.department.find(({ department: departmentName }) => departmentName === department.name);
             if (!findDepartment) return this.res.status(403).json({ error: 'Você nao faz parte deste departamento' });
 
-            await this.createRequirement(department, 'postagem_de_aulas', { militaryNickname, typeOfClass, comments, state: 'Pendente' }, teacher);
+            await this.createRequirement(department.name, 'postagem_de_aulas', { militaryNickname, typeOfClass, comments, state: 'Pendente' }, teacher.nickname);
             return this.res.status(201).json({ success: 'Aula postada com sucesso!' });
         } catch(err) {
             return this.res.status(500).json({ error: 'Erro interno' });
@@ -138,7 +136,6 @@ export class DepartmentRequirement {
             if (!newMemberUser) return this.res.status(404).json({ error: 'Nao foi possivel encontrar o militar' });
             if (!department) return this.res.status(404).json({ error: 'Cargo inexistente na hierarquia do departamento' });
 
-            console.log(department.members);
             if (department.members.leader !== leader.nickname && department.members.viceLeader !== leader.nickname)
                 return this.res.status(403).json({ error: 'Você não tem permissao para adicionar um membro' });
 
@@ -161,13 +158,13 @@ export class DepartmentRequirement {
                 if (office === 'Lider' || office === 'Vice-Lider') {
                     newMemberUser.department = { role: office, department: department.name };
                     department.members[positionInEnglish] = newMemberUser.nickname;
-                    await this.createRequirement(department, 'adiciona_membro', { militaryNickname, office, changeOfPosition: true }, leader);
+                    await this.createRequirement(department.name, 'adiciona_membro', { militaryNickname, office, changeOfPosition: true }, leader.nickname);
                     await department.save();
                     return !!this.res.status(200).json({ success: 'Liderança renomeada com sucesso!' });
                 } else if (office !== 'Instrutor' && office !== 'Membro') return !!this.res.status(400).json({ error: 'Este não é um cargo valido na hierarquia interna do departamento' });
                 
                 newMemberUser.department = { role: office, department: department.name };
-                await this.createRequirement(department, 'adiciona_membro', { militaryNickname, office, changeOfPosition: true }, leader);
+                await this.createRequirement(department.name, 'adiciona_membro', { militaryNickname, office, changeOfPosition: true }, leader.nickname);
                 department.members[positionInEnglish].push(newMemberUser.nickname);
                 await department.save();
                 return !!this.res.status(200).json({ success: 'Membro realocado com sucesso!' });
@@ -197,7 +194,7 @@ export class DepartmentRequirement {
             await department.save();
 
             newMemberUser.department.push({ role: office, department: department.name });
-            await this.createRequirement(department, 'adiciona_membro', { militaryNickname, office }, leader);
+            await this.createRequirement(department.name, 'adiciona_membro', { militaryNickname, office }, leader.nickname);
             await newMemberUser.save();
             return this.res.status(201).json({ success: 'Novo membro adicionado no departamento com sucesso!' })
         } catch(err) {
@@ -234,7 +231,7 @@ export class DepartmentRequirement {
             const findDocument = documents.find(document => document.data.title === documentTitle);
             if (findDocument) return this.res.status(403).json({ error: 'Este documento ja está postado' });
     
-            await this.createRequirement(findDepartment, 'postagem_de_documentos', { title: documentTitle, content: cleanHtml }, creator);
+            await this.createRequirement(findDepartment.name, 'postagem_de_documentos', { title: documentTitle, content: cleanHtml }, creator.nickname);
             return this.res.status(201).json({ success: 'Documento adicionado com sucesso!' });
         } catch(err) {
             return this.res.status(500).json({ error: 'Erro interno' });
@@ -270,7 +267,7 @@ export class DepartmentRequirement {
             const findDocument = documents.find(document => document.data.title === className);
             if (findDocument) return this.res.status(403).json({ error: 'Esta aula ja está postada' });
     
-            await this.createRequirement(findDepartment, 'adiciona_aula', { name: className, content: cleanHtml }, creator);
+            await this.createRequirement(findDepartment.name, 'adiciona_aula', { name: className, content: cleanHtml }, creator.nickname);
             return this.res.status(201).json({ success: 'Aula adicionada com sucesso!' });
         } catch(err) {
             return this.res.status(500).json({ error: 'Erro interno' });

@@ -73,7 +73,26 @@ $(document).ready(function () {
                 `;
                 loadLessons();
                 break;
-
+            
+            case 'aulas_rh':
+                contentHtml = `
+                    <table class="table is-fullwidth is-striped">
+                        <thead>
+                            <tr>
+                                <th>Instrutor</th>
+                                <th>Aluno</th>
+                                <th>Nome do Curso</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listOfCourses">
+                        </tbody>
+                    </table>
+                `;
+                $('#departmentContent').html(contentHtml);
+                listOfCourses();
+                break;
             case 'requerimentos':
                 contentHtml = `
                     <div class="field">
@@ -205,6 +224,7 @@ $(document).ready(function () {
                 });
             },
             error: function (data) {
+                console.log(data);
                 if (data.status === 400 ||
                     data.status === 403 ||
                     data.status === 404) {
@@ -305,6 +325,65 @@ $(document).ready(function () {
         });
     }
 
+    function listOfCourses() {
+        const departmentName = $('input[type="hidden"]').val();
+        $.ajax({
+            method: 'GET',
+            url: `/api/departments/listOfCourses?departmentName=${departmentName}`,
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function(data) {
+                $('#listOfCourses').empty();
+                data.forEach(course => {
+                    $('#listOfCourses').append(`
+                        <tr>
+                            <td data-label="Instrutor">${course.createdBy}</td>
+                            <td data-label="Aluno">${course.data.militaryNickname}</td>
+                            <td data-label="Nome do Curso">${course.data.typeOfClass}</td>
+                            <td data-label="Status">${course.data.state}</td>
+                            <td data-label="Ações">
+                                <button class="button is-small is-info approve-button" data-id="${course._id}">Aprovar</button>
+                                <button class="button is-small is-danger reject-button" data-id="${course._id}">Reprovar</button>
+                            </td>
+                        </tr>
+                    `);
+                    $(document).off('click', '.approve-button');
+                    $(document).off('click', '.reject-button');
+                    $(document).on('click', '.approve-button', function() {
+                        actionRequest.call(this, 'Aprovado');
+                    });
+                    $(document).on('click', '.reject-button', function() {
+                        actionRequest.call(this, 'Reprovado');
+                    });
+
+                    function actionRequest(action) {
+                        const courseId = $(this).data('id');
+                        $.ajax({
+                            method: 'GET',
+                            url: `/api/changeCourseStatus/${courseId}?departmentName=${departmentName}&action=${action}`,
+                            xhrFields: {
+                                withCredentials: true
+                            },
+                            success: function (data) {
+                                successfulOperation(data.success);
+                                listOfCourses();
+                                setTimeout(() => $('.box > .is-success').remove(), 3000);
+                            },
+                            error: function (err) {
+                                showError(err.responseJSON.error);
+                                setTimeout(() => $('.box > .is-danger').remove(), 3000);
+                            }
+                        });
+                    }
+                });
+            },
+            error: function(err) {
+                showError(err.responseJSON.error);
+            }
+        })
+    }
+
     function loadMembers() {
         $('head').append('<style>.box.is-multiline { display: flex; flex-direction: column; align-items: center; }</style>');
         const departmentName = $('input[type="hidden"]').val();
@@ -359,7 +438,7 @@ $(document).ready(function () {
                                         <button class="button is-small is-info approve-button" data-id="${requirement._id}">Aprovar</button>
                                         <button class="button is-small is-danger reject-button" data-id="${requirement._id}">Reprovar</button>
                                     </td>
-                                </tr>                            
+                                </tr>
                             `);
                 });
                 $(document).off('click', '.approve-button');

@@ -76,7 +76,7 @@ export const getDocumentsDepartment = async (req, res) => {
     const findUserDepartment = user.department.find(({ department }) => department === departmentName );
     if (!findUserDepartment) return res.status(403).json({ error: 'Você não faz parte deste departamento' });
 
-    const findDocument = await RequirementModel.find({ department: findDepartment, type: 'postagem_de_documentos' }).lean().select('-_id -department -type -__v');
+    const findDocument = await RequirementModel.find({ department: findDepartment.name, type: 'postagem_de_documentos' }, { data: 1, createdBy: 1, createdAt: 1 }).lean();
     if (!findDocument.length) return res.status(404).json({ error: 'Nenhum documento foi encontrado' });
 
     return res.status(200).json(findDocument);
@@ -139,7 +139,7 @@ export const getClasses = async (req, res) => {
     const findUserDepartment = user.department.find(({ department }) => department === departmentName );
     if (!findUserDepartment) return res.status(403).json({ error: 'Você não faz parte deste departamento' });
 
-    const findClasses = await RequirementModel.find({ department: findDepartment._id, type: 'adiciona_aula' }).select('data -_id');
+    const findClasses = await RequirementModel.find({ department: findDepartment.name, type: 'adiciona_aula' }).select('data -_id');
     if (!findClasses) return res.status(404).json({ error: 'Nenhum script de aula disponivel no momento' });
 
     return res.status(200).json(findClasses);
@@ -159,14 +159,64 @@ export const getClassPosting = async (req, res) => {
     const findUserDepartment = user.department.find(({ department }) => department === departmentName );
     if (!findUserDepartment) return res.status(403).json({ error: 'Você não faz parte deste departamento' });
 
-    const findClasses = await RequirementModel.find({ department: findDepartment._id, type: 'postagem_de_aulas' }).select('data createdBy -_id');
+    const findClasses = await RequirementModel.find({ department: findDepartment.name, type: 'postagem_de_aulas' }).select('data createdBy -_id');
     if (!findClasses) return res.status(404).json({ error: 'Nenhum script de aula disponivel no momento' });
 
     for (const { data, createdBy } of findClasses) {
-        const classInstructor = await RegisterModel.findOne({ _id: createdBy }).select('nickname -_id');
+        const classInstructor = await RegisterModel.findOne({ nickname: createdBy }).select('nickname -_id');
         if (!classInstructor) return res.status(404).json({ error: 'Oops! Algo deu errado' });
         dataToBeSend.push({ data, classInstructor });
     }
 
     return res.status(200).json(dataToBeSend);
+}
+
+export const listOfCourses = async (req, res) => {
+    const { departmentName } = req.query;
+    if (!departmentName) return res.status(400).json({ error: 'Query não especificada' });
+    try {
+        const user = await RegisterModel.findOne({ _id: req.userId }).select('+department');
+        if (!user) return res.status(403).json({ error: 'Você não tem permissão para ver todos os cursos' });
+
+        const findDepartment = await DepartmentModel.findOne({ name: departmentName });
+        if (!findDepartment) return res.status(404).json({ error: 'Departamento não encontrado' });
+
+        const findUserDepartment = user.department.find(({ department }) => department === departmentName );
+        if (!findUserDepartment) return res.status(403).json({ error: 'Você não faz parte do RH' });
+
+        const courses = await RequirementModel.find({ type: 'postagem_de_aulas' });
+        if (!courses.length) return res.status(404).json({ error: 'Nenhuma aula encontrada' });
+
+        return res.status(200).json(courses);
+    } catch (err) {
+        return res.status(500).json({ error: 'Houve um erro interno ao procurar por aulas' });
+    }
+}
+
+export const changeCourseStatus = async (req, res) => {
+    const { courseId } = req.params;
+    if (!courseId) return res.status(400).json({ error: 'ID do curso não especificado' });
+
+    const { action, departmentName } = req.query;
+    if (!action) return res.status(400).json({ error: 'Ação não especificada' });
+    if (action !== 'Reprovado' && action !== 'Aprovado') return res.status(400).json({ error: 'Ação não permitida. Tente novamente' });
+    if (!departmentName) return res.status(400).json({ error: 'Nome do departamento não especificado' });
+
+    try {
+        const user = await RegisterModel.findOne({ _id: req.userId }).select('+department');
+        if (!user) return res.status(403).json({ error: 'Você não tem permissão para aprovar/reprovar os cursos' });
+
+        const findDepartment = await DepartmentModel.findOne({ name: departmentName });
+        if (!findDepartment) return res.status(404).json({ error: 'Departamento não encontrado' });
+
+        const findUserDepartment = user.department.find(({ department }) => department === departmentName );
+        if (!findUserDepartment) return res.status(403).json({ error: 'Você não faz parte do RH' });
+
+        const course = await RequirementModel.updateOne({ _id: courseId }, { $set: { 'data.state': action } });
+        if (!course.matchedCount) return res.status(404).json({ error: 'Não foi possível encontrar o curso desejado' });
+        if (!course.modifiedCount) return res.status(400).json({ error: 'Nenhuma modificação foi realizada' });
+        return res.status(200).json({ success: `Curso ${action.toLowerCase()} com sucesso!` });
+    } catch (err) {
+        return res.status(500).json({ error: 'Houve um erro interno. Contate um desenvolvedor' });
+    }
 }

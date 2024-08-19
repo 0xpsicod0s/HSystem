@@ -1,7 +1,7 @@
 import express from 'express';
 import { register, login, logout } from '../controllers/authController.js';
 import { isAuthenticated, roleMiddleware, departmentMiddleware } from '../middlewares/auth.js';
-import { departmentParticipant, departmentsRequirements, getDocumentsDepartment, getMembers, getClasses, editMember, removeMember, getClassPosting, getDepartment, isLeader } from '../controllers/departmentsController.js';
+import { departmentParticipant, departmentsRequirements, getDocumentsDepartment, getMembers, getClasses, editMember, removeMember, getClassPosting, listOfCourses, getDepartment, isLeader, changeCourseStatus } from '../controllers/departmentsController.js';
 import { searchUser, validateSearchUser, getMilitaries, changeRequirementStatus, listRequirements, requirements, showDocument, showPublication, getPublications, getDocuments } from '../controllers/pagesControllers.js';
 import panelController from '../controllers/panelController.js';
 import { middlewareIsAdmin } from '../middlewares/panelMiddleware.js';
@@ -23,7 +23,7 @@ router.get('/user/:nick', isAuthenticated, viewProfile);
 router.post('/user/reset', isAuthenticated, reset);
 
 // Rotas internas do system
-router.get('/search', isAuthenticated, roleMiddleware(militaryHierarchy), validateSearchUser, searchUser);
+router.get('/search', isAuthenticated, validateSearchUser, searchUser);
 router.get('/members', isAuthenticated, getMilitaries);
 router.get('/departmentParticipant', isAuthenticated, departmentMiddleware(departments), departmentParticipant);
 router.get('/doc/:link', isAuthenticated, showDocument);
@@ -33,6 +33,7 @@ router.get('/getDocuments', isAuthenticated, getDocuments);
 router.get('/changeRequirementStatus/:requirementId', isAuthenticated, departmentMiddleware(['Recursos Humanos']), changeRequirementStatus);
 router.get('/requirements', isAuthenticated, departmentMiddleware(['Recursos Humanos']), listRequirements);
 router.post('/requirements', isAuthenticated, requirements);
+router.get('/changeCourseStatus/:courseId', isAuthenticated, departmentMiddleware(['Recursos Humanos']), changeCourseStatus);
 
 
 // Rotas dos departamentos
@@ -41,6 +42,7 @@ router.get('/departments/getDocuments/', isAuthenticated, departmentMiddleware(d
 router.get('/departments/getMembers', isAuthenticated, departmentMiddleware(departments), getMembers);
 router.get('/departments/getClasses', isAuthenticated, departmentMiddleware(departments), getClasses);
 router.get('/departments/getClassPosting', isAuthenticated, departmentMiddleware(departments), getClassPosting);
+router.get('/departments/listOfCourses', isAuthenticated, departmentMiddleware(['Recursos Humanos']), listOfCourses);
 router.get('/departments/getDepartment', isAuthenticated, departmentMiddleware(departments), getDepartment);
 router.get('/departments/isLeader', isAuthenticated, departmentMiddleware(departments), isLeader);
 

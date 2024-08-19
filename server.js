@@ -29,10 +29,6 @@ app.use(helmet({
         },
     }
 }));
-app.use((req, _, next) => {
-    console.log(req.headers['csrf-token']);
-    next();
-})
 app.use(csrfProtection, (req, res, next) => {
     res.cookie('XSRFTOKEN', req.csrfToken());
     next();
