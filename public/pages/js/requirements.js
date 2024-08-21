@@ -96,7 +96,25 @@ $(document).ready(function () {
                     <div class="field">
                         <label class="label has-text-white">Patente do Militar</label>
                         <div class="control">
-                            <input class="input" type="text" placeholder="Patente do Militar">
+                            <div class="select is-fullwidth">
+                                <select>
+                                    <option value="" disabled selected>Selecione um cargo</option>
+                                    <option value="Soldado">Soldado</option>
+                                    <option value="Cabo">Cabo</option>
+                                    <option value="Sargento">Sargento</option>
+                                    <option value="Suboficial">Suboficial</option>
+                                    <option value="Aspirante">Aspirante</option>
+                                    <option value="Tenente">Tenente</option>
+                                    <option value="Capitão">Capitão</option>
+                                    <option value="Major">Major</option>
+                                    <option value="Tenente-coronel">Tenente-coronel</option>
+                                    <option value="Coronel">Coronel</option>
+                                    <option value="General">General</option>
+                                    <option value="Marechal">Marechal</option>
+                                    <option value="Subcomandante">Subcomandante</option>
+                                    <option value="Comandante">Comandante</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="field">
@@ -144,7 +162,25 @@ $(document).ready(function () {
                     <div class="field">
                         <label class="label has-text-white">Cargo a Ser Vendido</label>
                         <div class="control">
-                            <input class="input" type="text" placeholder="Cargo a Ser Vendido">
+                            <div class="select is-fullwidth">
+                                <select>
+                                    <option value="" disabled selected>Selecione um cargo</option>
+                                    <option value="Estagiário">Estagiário</option>
+                                    <option value="Agente">Agente</option>
+                                    <option value="Sócio">Sócio</option>
+                                    <option value="Analista">Analista</option>
+                                    <option value="Supervisor">Supervisor</option>
+                                    <option value="Inspetor">Inspetor</option>
+                                    <option value="Inspetor-Chefe">Inspetor-Chefe</option>
+                                    <option value="Coordenador">Coordenador</option>
+                                    <option value="Administrador">Administrador</option>
+                                    <option value="Escrivão">Escrivão</option>
+                                    <option value="Ministro">Ministro</option>
+                                    <option value="Conselheiro">Conselheiro</option>
+                                    <option value="Acionista">Acionista</option>
+                                    <option value="Chanceler">Chanceler</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="field">
@@ -230,7 +266,12 @@ $(document).ready(function () {
             const dataToSend = [selectedType];
             const csrfToken = document.cookie.split('; ').find(row => row.startsWith('XSRFTOKEN=')).split('=')[1];
             $('#requirementForm .control').each(function (_, element) {
-                const inputElement = $($(element)[0].firstElementChild)
+                const inputElement = $($(element)[0].firstElementChild);
+                if (inputElement.hasClass('select')) {
+                    const inputValue = inputElement.children().val();
+                    dataToSend.push({ inputValue });
+                    return;
+                }
                 if (inputElement.hasClass('button')) return;
                 const inputValue = inputElement.val();
                 dataToSend.push({ inputValue });
