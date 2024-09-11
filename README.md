@@ -5,7 +5,7 @@ Este sistema foi desenvolvido para gerenciar uma empresa fictícia dentro do Hab
 
 ## Variáveis de Ambiente
 
-Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu .env
+Para rodar esse projeto, você vai precisar adicionar as seguintes variáveis de ambiente no seu config.env
 
 `JWT_SECRET`
 
