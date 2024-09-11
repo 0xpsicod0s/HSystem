@@ -64,7 +64,8 @@ export const isLeader = async (req, res) => {
 export const departmentsRequirements = async (req, res) => new DepartmentRequirement(req, res).sendRequirement();
 
 export const getDocumentsDepartment = async (req, res) => {
-    const { departmentName } = req.query;
+    const { departmentName: department } = req.query;
+    const departmentName = decodeURIComponent(department);
     if (!departmentName) return res.status(400).json({ error: 'Query nao informada' });
 
     const user = await RegisterModel.findOne({ _id: req.userId }).select('+department');

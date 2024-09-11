@@ -189,7 +189,7 @@ $(document).ready(function () {
     });
 
     function loadDocuments() {
-        const departmentName = $('input[type="hidden"]').val();
+        const departmentName = encodeURIComponent($('input[type="hidden"]').val());
         $.ajax({
             method: 'GET',
             url: `/api/departments/getDocuments?departmentName=${departmentName}`,
@@ -209,17 +209,8 @@ $(document).ready(function () {
 
                 $('.button').each(function (index, element) {
                     $(element).on('click', function () {
-                        const documentName = $(element.previousElementSibling).text();
-                        const { data: findDocument } = data.find(({ data }) => data.title === documentName);
-                        if (!findDocument) showError('Documento nao encontrado');
-                        const documentContentHtml = `
-                            <div class="box">
-                                <div class="content has-text-white">
-                                    ${findDocument.content}
-                                </div>
-                            </div>
-                        `
-                        $('#documentsList').html(documentContentHtml);
+                        const documentName = encodeURIComponent($(this).prev().text());
+                        window.location = `/departments/doc/document.html?departmentName=${departmentName}&documentName=${documentName}`;
                     });
                 });
             },
