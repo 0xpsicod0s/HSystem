@@ -42,5 +42,6 @@ npm start
 - Armazenamento seguro de documentos importantes de cada departamento, com fácil acesso para membros autorizados, garantindo o gerenciamento eficiente de relatórios e registros.
 #### - Relatórios de Atividades:
 - Geração de relatórios de atividades dos membros, permitindo um acompanhamento detalhado do desempenho e das ações tomadas por cada funcionário.
+
 Essas funcionalidades tornam o sistema essencial para a administração de uma corporação policial dentro de um ambiente de RPG, promovendo uma gestão mais eficaz e organizada.
 
